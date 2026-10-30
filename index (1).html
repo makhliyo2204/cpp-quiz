@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тест-справочник C++</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#46178f; --bg2:#25076b;
+  --red:#e21b3c; --blue:#1368ce; --yellow:#d89e00; --green:#26890c;
+  --ink:#1f1f1f; --white:#fff; --muted:#6b6b7b;
+  --ok:#66bf39; --bad:#f35;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:Montserrat,system-ui,sans-serif;color:var(--white);
+  background:radial-gradient(circle at 20% 10%,#5a2bb0 0,var(--bg1) 35%,var(--bg2) 100%);
+  min-height:100vh;overflow-x:hidden;
+}
+.bgshapes{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bgshapes span{position:absolute;opacity:.07;background:#fff}
+.bgshapes .s1{width:340px;height:340px;border-radius:50%;left:-90px;top:-80px}
+.bgshapes .s2{width:260px;height:260px;right:-60px;bottom:-40px;transform:rotate(25deg)}
+.bgshapes .s3{width:0;height:0;background:none;border-left:140px solid transparent;border-right:140px solid transparent;border-bottom:240px solid #fff;right:12%;top:8%}
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:20px 18px 40px;min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column}
+.screen.active{display:flex;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+
+/* ---------- start ---------- */
+.logo{font-weight:900;font-size:clamp(42px,8vw,84px);letter-spacing:-2px;text-align:center;margin-top:3vh;line-height:1}
+.logo b{color:#ffd23f}
+.subtitle{text-align:center;font-weight:700;opacity:.85;margin:10px 0 26px;font-size:18px}
+.card{background:#fff;color:var(--ink);border-radius:14px;padding:22px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.start-card{max-width:620px;width:100%;margin:0 auto}
+label.lbl{display:block;font-weight:800;margin:14px 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:#46178f}
+input[type=text]{width:100%;font:inherit;font-weight:700;font-size:20px;padding:14px 16px;border:3px solid #ddd;border-radius:8px;text-align:center;outline:none}
+input[type=text]:focus{border-color:var(--bg1)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:3px solid #e3dcf2;background:#f6f2fd;color:#46178f;border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;user-select:none;transition:.15s}
+.chip.on{background:#46178f;border-color:#46178f;color:#fff}
+.chip:hover{transform:translateY(-1px)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:800;font-size:18px;border:0;border-radius:8px;padding:14px 22px;cursor:pointer;color:#fff;background:#333;box-shadow:0 4px 0 rgba(0,0,0,.35);transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.btn.big{width:100%;font-size:22px;padding:16px;margin-top:20px;background:#1f1f1f}
+.btn.purple{background:var(--bg1)}
+.btn.light{background:#fff;color:#46178f}
+.btn.ghost{background:rgba(255,255,255,.15);box-shadow:none}
+.tabs{display:flex;justify-content:center;gap:10px;margin-bottom:18px}
+.hint{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+
+/* ---------- countdown ---------- */
+#countdown{align-items:center;justify-content:center}
+.cd-num{font-size:160px;font-weight:900;animation:zoom 1s ease infinite}
+@keyframes zoom{0%{transform:scale(.4);opacity:0}30%{transform:scale(1.1);opacity:1}100%{transform:scale(1);opacity:1}}
+.cd-title{font-size:28px;font-weight:800;opacity:.9}
+
+/* ---------- question ---------- */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-weight:800}
+.pill{background:rgba(255,255,255,.18);border-radius:999px;padding:8px 14px;font-size:15px}
+.qbox{background:#fff;color:var(--ink);border-radius:10px;padding:18px 22px;text-align:center;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.qtopic{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#46178f;margin-bottom:6px}
+.qtext{font-size:clamp(19px,2.6vw,28px);font-weight:800;line-height:1.3}
+.code{font-family:"JetBrains Mono",monospace;background:#1e1b2e;color:#e7e3ff;border-radius:8px;padding:14px 16px;margin:14px auto 0;text-align:left;font-size:clamp(13px,1.6vw,16px);white-space:pre;overflow-x:auto;max-width:640px;line-height:1.55}
+.middle{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:16px 0}
+.timer{width:86px;height:86px;border-radius:50%;background:var(--bg1);border:5px solid #fff;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;flex-shrink:0;transition:background .3s}
+.timer.warn{background:var(--red);animation:pulse .5s ease infinite alternate}
+@keyframes pulse{to{transform:scale(1.08)}}
+.bar{flex:1;height:12px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.bar i{display:block;height:100%;background:#ffd23f;width:100%;transition:width .1s linear}
+.answered{min-width:86px;text-align:center;font-weight:800}
+.answered b{display:block;font-size:30px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:240px}
+.ans{position:relative;border:0;border-radius:8px;color:#fff;font:inherit;font-weight:800;font-size:clamp(16px,2vw,22px);text-align:left;padding:18px 18px 18px 74px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.3);display:flex;align-items:center;min-height:90px;transition:transform .1s,opacity .25s,filter .25s}
+.ans:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-2px)}
+.ans:active:not(:disabled){transform:translateY(3px)}
+.ans svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:40px;height:40px}
+.ans .k{position:absolute;right:12px;top:8px;font-size:12px;opacity:.6}
+.ans code{font-family:"JetBrains Mono",monospace;background:rgba(0,0,0,.2);padding:2px 6px;border-radius:4px}
+.a0{background:var(--red)}.a1{background:var(--blue)}.a2{background:var(--yellow)}.a3{background:var(--green)}
+.ans.long{font-size:clamp(14px,1.5vw,17px)}
+.ans.dim{opacity:.3;filter:grayscale(.4)}
+.ans.right{outline:5px solid #fff;outline-offset:-5px}
+.ans.right::after{content:"✔";position:absolute;right:16px;font-size:30px}
+.ans.picked.wrong::after{content:"✖";position:absolute;right:16px;font-size:30px}
+
+/* ---------- feedback ---------- */
+#feedback{align-items:center;justify-content:center;text-align:center}
+#feedback.okbg{background:transparent}
+.fb-title{font-size:clamp(34px,6vw,56px);font-weight:900}
+.fb-icon{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:64px;margin:16px auto;border:6px solid #fff}
+.fb-icon.ok{background:var(--ok)}.fb-icon.bad{background:var(--bad)}
+.fb-points{font-size:26px;font-weight:900;background:rgba(0,0,0,.3);display:inline-block;padding:10px 22px;border-radius:6px;margin:6px 0}
+.fb-streak{font-weight:800;margin:8px 0 18px;font-size:18px}
+.ref{background:#fff;color:var(--ink);border-radius:12px;padding:18px 22px;max-width:760px;width:100%;text-align:left;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.ref h4{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#46178f;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ref p{font-size:16px;line-height:1.5;font-weight:500}
+.ref .ca{font-weight:800;margin-bottom:8px}
+.ref code{font-family:"JetBrains Mono",monospace;background:#f1ecfb;color:#46178f;padding:1px 5px;border-radius:4px;font-size:.92em}
+.ref .code{margin-top:10px;max-width:none}
+.fb-actions{margin-top:20px;display:flex;gap:10px;justify-content:center}
+
+/* ---------- results ---------- */
+.podium-title{text-align:center;font-size:clamp(30px,5vw,48px);font-weight:900;margin-top:10px}
+.bigscore{text-align:center;margin:10px 0 4px;font-size:clamp(54px,10vw,96px);font-weight:900;color:#ffd23f;text-shadow:0 5px 0 rgba(0,0,0,.25)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.stat{background:rgba(255,255,255,.14);border-radius:10px;padding:14px;text-align:center}
+.stat b{display:block;font-size:28px;font-weight:900}
+.stat span{font-size:13px;font-weight:700;opacity:.85}
+.grade{text-align:center;font-weight:800;font-size:20px;margin-bottom:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+.panel{background:#fff;color:var(--ink);border-radius:12px;padding:16px 18px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.panel h3{font-size:18px;margin-bottom:10px;color:#46178f}
+.lb li{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;font-weight:700;list-style:none}
+.lb li:nth-child(odd){background:#f5f2fb}
+.lb li.me{background:#ffd23f}
+.lb .pos{width:28px;display:inline-block;color:#46178f;font-weight:900}
+.review{max-height:340px;overflow:auto}
+.rv{border-left:5px solid var(--ok);padding:6px 10px;margin-bottom:8px;background:#f8f8fb;border-radius:4px;font-size:14px}
+.rv.bad{border-color:var(--bad)}
+.rv b{display:block}
+.rv small{color:var(--muted);font-weight:600}
+.tbar{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px;font-weight:700}
+.tbar .tn{width:190px;flex-shrink:0}
+.tbar .tt{flex:1;height:10px;background:#eee;border-radius:9px;overflow:hidden}
+.tbar .tt i{display:block;height:100%;background:var(--green)}
+
+/* ---------- reference ---------- */
+.ref-head{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.ref-head input{flex:1;min-width:200px;font-size:16px;text-align:left}
+.ref-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.rcard{background:#fff;color:var(--ink);border-radius:10px;padding:14px 16px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.rcard .t{font-size:11px;font-weight:800;color:#46178f;text-transform:uppercase;letter-spacing:1px}
+.rcard h5{font-size:16px;margin:4px 0 6px}
+.rcard p{font-size:14px;line-height:1.45}
+.rcard code{font-family:"JetBrains Mono",monospace;background:#f1ecfb;color:#46178f;padding:1px 4px;border-radius:4px;font-size:.92em}
+.rcard .code{font-size:13px;margin-top:8px}
+.empty{opacity:.8;text-align:center;padding:30px;font-weight:700}
+
+.confetti{position:fixed;top:-20px;width:10px;height:16px;z-index:5;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+@media (max-width:720px){
+  .answers{grid-template-columns:1fr;min-height:0}
+  .ans{min-height:64px;padding-left:64px}
+  .ans svg{width:32px;height:32px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .two{grid-template-columns:1fr}
+  .timer{width:66px;height:66px;font-size:26px}
+  .tbar .tn{width:110px}
+}
+</style>
+</head>
+<body>
+<div class="bgshapes"><span class="s1"></span><span class="s2"></span><span class="s3"></span></div>
+<main>
+
+<!-- START -->
+<section class="screen active" id="start">
+  <div class="logo">C<b>++</b> Quiz!</div>
+  <div class="subtitle">Тест-справочник по лекциям 1–8 · «Основы программирования и алгоритмизации»</div>
+  <div class="tabs">
+    <button class="btn light" onclick="show('start')">🎮 Играть</button>
+    <button class="btn ghost" onclick="openRef()">📘 Справочник</button>
+  </div>
+  <div class="card start-card">
+    <label class="lbl" for="nick">Ваше имя</label>
+    <input type="text" id="nick" maxlength="20" placeholder="Введите никнейм" autocomplete="off">
+    <label class="lbl">Темы</label>
+    <div class="chips" id="topicChips"></div>
+    <label class="lbl">Количество вопросов</label>
+    <div class="chips" id="countChips"></div>
+    <label class="lbl">Время на вопрос</label>
+    <div class="chips" id="timeChips"></div>
+    <button class="btn big" id="goBtn">Начать ▶</button>
+    <div class="hint">Отвечайте мышкой или клавишами 1–4. Чем быстрее правильный ответ — тем больше очков!</div>
+  </div>
+</section>
+
+<!-- COUNTDOWN -->
+<section class="screen" id="countdown">
+  <div class="cd-title" id="cdTitle">Приготовьтесь!</div>
+  <div class="cd-num" id="cdNum">3</div>
+</section>
+
+<!-- QUESTION -->
+<section class="screen" id="question">
+  <div class="topbar">
+    <span class="pill" id="qCounter">1 / 10</span>
+    <span class="pill" id="qPlayer">Игрок</span>
+    <span class="pill">⭐ <span id="qScore">0</span></span>
+  </div>
+  <div class="qbox">
+    <div class="qtopic" id="qTopic"></div>
+    <div class="qtext" id="qText"></div>
+    <div class="code" id="qCode" hidden></div>
+  </div>
+  <div class="middle">
+    <div class="timer" id="timer">20</div>
+    <div class="bar"><i id="timeBar"></i></div>
+    <div class="answered">Серия<b id="qStreak">0🔥</b></div>
+  </div>
+  <div class="answers" id="answers"></div>
+</section>
+
+<!-- FEEDBACK -->
+<section class="screen" id="feedback">
+  <div class="fb-title" id="fbTitle">Верно!</div>
+  <div class="fb-icon" id="fbIcon">✔</div>
+  <div class="fb-points" id="fbPoints">+ 850</div>
+  <div class="fb-streak" id="fbStreak"></div>
+  <div class="ref" id="fbRef"></div>
+  <div class="fb-actions">
+    <button class="btn light" id="nextBtn">Далее ▶</button>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="screen" id="results">
+  <div class="podium-title" id="resTitle">Итоги игры</div>
+  <div class="bigscore" id="resScore">0</div>
+  <div class="grade" id="resGrade"></div>
+  <div class="stats" id="resStats"></div>
+  <div class="two">
+    <div class="panel">
+      <h3>🏆 Таблица лидеров</h3>
+      <ol class="lb" id="leader"></ol>
+      <h3 style="margin-top:16px">📊 По темам</h3>
+      <div id="byTopic"></div>
+    </div>
+    <div class="panel">
+      <h3>📝 Разбор ответов</h3>
+      <div class="review" id="review"></div>
+    </div>
+  </div>
+  <div class="fb-actions">
+    <button class="btn light" onclick="startGame()">🔁 Ещё раз</button>
+    <button class="btn ghost" onclick="retryWrong()" id="retryBtn">Повторить ошибки</button>
+    <button class="btn ghost" onclick="show('start')">В меню</button>
+  </div>
+</section>
+
+<!-- REFERENCE -->
+<section class="screen" id="reference">
+  <div class="ref-head">
+    <button class="btn ghost" onclick="show('start')">← Назад</button>
+    <input type="text" id="refSearch" placeholder="Поиск по справочнику: указатель, vector, класс…">
+  </div>
+  <div class="chips" id="refChips" style="margin-bottom:14px"></div>
+  <div class="ref-list" id="refList"></div>
+</section>
+
+</main>
+
+<script>
+/* ================== DATA ================== */
+const TOPICS = ["Л1 · Алгоритмы", "Л2 · Языки и компилятор", "Л3 · Алфавит и литералы", "Л4 · Имена и программа", "Л5 · Типы и переменные", "Л6 · Константы и выражения", "Л7 · printf и scanf", "Л8 · Логические операции"];
+// a: варианты (правильный — индекс c), h: тема справки, e: справка, ex: пример
+const Q = [
+{
+"t": 0,
+"q": "Что такое алгоритм?",
+"a": [
+"Точное описание последовательности действий, приводящих к решению задачи за конечное число шагов",
+"Любая программа на языке C++",
+"Набор случайных команд для компьютера",
+"Описание внешнего вида программы"
+],
+"c": 0,
+"h": "Понятие алгоритма",
+"e": "Алгоритм — точное описание последовательности действий, выполнение которых за <b>конечное число шагов</b> приводит к решению задачи. Он описывает, как из исходных данных получить результат."
+},
+{
+"t": 0,
+"q": "Что такое программирование?",
+"a": [
+"Процесс создания инструкций, которые компьютер может выполнить",
+"Ремонт компьютеров",
+"Только набор текста программы",
+"Установка операционной системы"
+],
+"c": 0,
+"h": "Что такое программирование",
+"e": "Программирование — процесс создания инструкций для компьютера. Он включает анализ задачи, алгоритмизацию, кодирование, тестирование, исправление ошибок и документирование."
+},
+{
+"t": 0,
+"q": "Какое свойство алгоритма означает, что решение разбито на отдельные шаги?",
+"a": [
+"Дискретность",
+"Массовость",
+"Результативность",
+"Конечность"
+],
+"c": 0,
+"h": "Свойства алгоритма",
+"e": "Пять свойств алгоритма: <b>дискретность</b> — разбит на шаги; <b>определённость</b> — каждая команда понимается однозначно; <b>конечность</b> — алгоритм завершается; <b>результативность</b> — получается результат; <b>массовость</b> — работает с разными данными."
+},
+{
+"t": 0,
+"q": "Какое свойство алгоритма нарушает команда «возьми подходящее число»?",
+"a": [
+"Определённость",
+"Конечность",
+"Массовость",
+"Дискретность"
+],
+"c": 0,
+"h": "Определённость",
+"e": "Определённость требует, чтобы каждая команда понималась <b>однозначно</b>. «Подходящее число» — подходящее для кого и по какому правилу? Такая команда не определена."
+},
+{
+"t": 0,
+"q": "Какое свойство означает, что алгоритм может работать с разными исходными данными?",
+"a": [
+"Массовость",
+"Определённость",
+"Дискретность",
+"Конечность"
+],
+"c": 0,
+"h": "Массовость",
+"e": "Массовость — алгоритм решает целый класс задач и может работать с разными входными данными, а не только с одним примером."
+},
+{
+"t": 0,
+"q": "Какое свойство требует, чтобы алгоритм обязательно завершился?",
+"a": [
+"Конечность",
+"Результативность",
+"Массовость",
+"Дискретность"
+],
+"c": 0,
+"h": "Конечность",
+"e": "Конечность — алгоритм должен завершиться за конечное число шагов. Бесконечный цикл нарушает это свойство."
+},
+{
+"t": 0,
+"q": "Что такое исполнитель алгоритма?",
+"a": [
+"Тот, кто понимает команды алгоритма и может их выполнять",
+"Только программист",
+"Только процессор компьютера",
+"Человек, который придумал задачу"
+],
+"c": 0,
+"h": "Исполнитель алгоритма",
+"e": "Исполнитель — тот, кто понимает и выполняет команды: человек, компьютер, робот, калькулятор, станок или программа."
+},
+{
+"t": 0,
+"q": "Что называется системой команд исполнителя?",
+"a": [
+"Набор действий, которые исполнитель умеет выполнять",
+"Список ошибок программы",
+"Схема устройства компьютера",
+"Набор входных данных"
+],
+"c": 0,
+"h": "Система команд исполнителя",
+"e": "Система команд — набор действий, доступных исполнителю. Алгоритм должен состоять только из этих команд. Например, компьютер не понимает фразу «сделай красиво»."
+},
+{
+"t": 0,
+"q": "Какая команда записана правильно с точки зрения точности?",
+"a": [
+"Увеличить x на 1",
+"Немного увеличить x",
+"Сделать x побольше",
+"Изменить x как-нибудь"
+],
+"c": 0,
+"h": "Точность команд",
+"e": "Команда должна быть точной: «увеличить x на 1» лучше, чем «немного увеличить x». В алгоритме нельзя оставлять фразы «как-нибудь» или «примерно»."
+},
+{
+"t": 0,
+"q": "Какие данные являются входными в задаче «площадь прямоугольника»?",
+"a": [
+"a и b — длина и ширина",
+"S — площадь",
+"Только S",
+"Формула S = a × b"
+],
+"c": 0,
+"h": "Вход, обработка, выход",
+"e": "Вход — данные, известные до начала (a, b). Обработка — действия над ними (S = a × b). Выход — результат (S). Если нельзя назвать вход и выход, алгоритм ещё не готов."
+},
+{
+"t": 0,
+"q": "Какой способ записи алгоритма похож на программу, но не привязан к синтаксису конкретного языка?",
+"a": [
+"Псевдокод",
+"Блок-схема",
+"Таблица",
+"Программный код"
+],
+"c": 0,
+"h": "Псевдокод",
+"e": "Псевдокод — промежуточная форма между описанием и программой. В нём используют слова ВВОД, ЕСЛИ, ИНАЧЕ, ПОКА, ДЛЯ, ВЫВОД. Напрямую на компьютере не запускается.",
+"ex": "НАЧАЛО\n  ВВЕСТИ a, b\n  ЕСЛИ a > b ТО max = a\n  ИНАЧЕ max = b\n  ВЫВЕСТИ max\nКОНЕЦ"
+},
+{
+"t": 0,
+"q": "В чём главный недостаток словесной записи алгоритма?",
+"a": [
+"Естественный язык может быть неоднозначным",
+"Её нельзя прочитать человеку",
+"Она работает только на компьютере",
+"Она требует знания C++"
+],
+"c": 0,
+"h": "Словесная запись",
+"e": "Словесную запись легко понять и обсуждать, но естественный язык бывает неоднозначным. Поэтому используют нумерованные шаги, короткие команды и явные условия."
+},
+{
+"t": 0,
+"q": "Для чего удобнее всего применять табличную запись алгоритма?",
+"a": [
+"Чтобы показать изменение значений переменных по шагам (трассировка)",
+"Чтобы нарисовать интерфейс программы",
+"Чтобы записать программу на C++",
+"Чтобы заменить компилятор"
+],
+"c": 0,
+"h": "Табличная запись",
+"e": "Таблица показывает значения переменных на каждом шаге. Это особенно удобно для циклов: видно номер итерации и изменение результата."
+},
+{
+"t": 0,
+"q": "Каким символом блок-схемы обозначается начало или конец алгоритма?",
+"a": [
+"Овал",
+"Ромб",
+"Прямоугольник",
+"Параллелограмм"
+],
+"c": 0,
+"h": "Символы блок-схем",
+"e": "<b>Овал</b> — начало/конец; <b>параллелограмм</b> — ввод/вывод; <b>прямоугольник</b> — действие, вычисление; <b>ромб</b> — проверка условия; <b>стрелка</b> — направление выполнения."
+},
+{
+"t": 0,
+"q": "Каким символом блок-схемы обозначается проверка условия?",
+"a": [
+"Ромб",
+"Овал",
+"Параллелограмм",
+"Прямоугольник"
+],
+"c": 0,
+"h": "Ромб — условие",
+"e": "Ромб используется для проверки условия (например, <code>a &gt; b?</code>). У него обычно два выхода: «да» и «нет»."
+},
+{
+"t": 0,
+"q": "Каким символом блок-схемы обозначается ввод или вывод данных?",
+"a": [
+"Параллелограмм",
+"Ромб",
+"Овал",
+"Прямоугольник"
+],
+"c": 0,
+"h": "Параллелограмм — ввод/вывод",
+"e": "Параллелограмм — блок ввода или вывода данных: «Ввести a, b», «Вывести S». Вычисления (S = a * b) записываются в прямоугольник."
+},
+{
+"t": 0,
+"q": "Какие три базовые структуры лежат в основе большинства алгоритмов?",
+"a": [
+"Следование, ветвление, цикл",
+"Ввод, вывод, печать",
+"Овал, ромб, стрелка",
+"Переменная, константа, функция"
+],
+"c": 0,
+"h": "Базовые структуры",
+"e": "<b>Следование</b> — команды по порядку (площадь). <b>Ветвление</b> — выбор действия по условию (чётность). <b>Цикл</b> — повторение действий (сумма от 1 до n)."
+},
+{
+"t": 0,
+"q": "Какой алгоритм не содержит условий и повторений?",
+"a": [
+"Линейный",
+"Разветвляющийся",
+"Циклический",
+"Рекурсивный"
+],
+"c": 0,
+"h": "Линейный алгоритм",
+"e": "В линейном алгоритме команды выполняются строго по порядку: ввод → вычисление → вывод. Пример — площадь прямоугольника S = a × b."
+},
+{
+"t": 0,
+"q": "Какое условие используется для проверки чётности числа n?",
+"a": [
+"n % 2 == 0",
+"n / 2 == 1",
+"n * 2 == 0",
+"n % 2 == 1"
+],
+"c": 0,
+"h": "Ветвление: чётность",
+"e": "Число чётное, если остаток от деления на 2 равен нулю. Например, <code>8 % 2 = 0</code>, <code>7 % 2 = 1</code>."
+},
+{
+"t": 0,
+"q": "Чему будет равна sum после выполнения алгоритма «сумма чисел от 1 до 4»?",
+"a": [
+"10",
+"4",
+"6",
+"9"
+],
+"c": 0,
+"h": "Цикл: накопление суммы",
+"e": "Трассировка: sum = 0+1 = 1, 1+2 = 3, 3+3 = 6, 6+4 = <b>10</b>. На каждой итерации к сумме добавляется текущее i."
+},
+{
+"t": 0,
+"q": "Что такое трассировка алгоритма?",
+"a": [
+"Ручное пошаговое выполнение алгоритма для проверки логики",
+"Автоматический перевод в машинный код",
+"Рисование блок-схемы",
+"Удаление ошибок компилятором"
+],
+"c": 0,
+"h": "Трассировка",
+"e": "Трассировка — ручное выполнение алгоритма с записью значений переменных после каждой команды или итерации. Помогает найти логические ошибки."
+},
+{
+"t": 0,
+"q": "Что такое декомпозиция?",
+"a": [
+"Разбиение сложной задачи на подзадачи",
+"Объединение нескольких программ в одну",
+"Удаление лишних переменных",
+"Перевод программы на другой язык"
+],
+"c": 0,
+"h": "Декомпозиция",
+"e": "Декомпозиция — разбиение общей задачи на подзадачи (ввод, обработка, вывод). Каждая подзадача решается своим небольшим алгоритмом или функцией."
+},
+{
+"t": 0,
+"q": "Какой этап решения задачи на компьютере идёт сразу после «определить вход и выход»?",
+"a": [
+"Составить алгоритм",
+"Записать код",
+"Протестировать",
+"Исправить ошибки"
+],
+"c": 0,
+"h": "Этапы решения задачи",
+"e": "Этапы: 1) понять условие; 2) определить вход и выход; 3) составить алгоритм; 4) записать код; 5) протестировать; 6) исправить ошибки."
+},
+{
+"t": 0,
+"q": "Какая типичная ошибка приводит к тому, что цикл выполняется на один раз больше или меньше?",
+"a": [
+"Ошибка границ цикла",
+"Неясная задача",
+"Слишком сложная запись",
+"Пропущен комментарий"
+],
+"c": 0,
+"h": "Типичные ошибки",
+"e": "Типичные ошибки: неясная задача, пропущенный шаг, неверное условие (<code>&gt;</code> вместо <code>&gt;=</code>), ошибка границ цикла, отсутствие проверки на разных данных."
+},
+{
+"t": 0,
+"q": "Какой критерий качества означает, что алгоритм даёт верный результат для всех допустимых данных?",
+"a": [
+"Правильность",
+"Эффективность",
+"Понятность",
+"Универсальность"
+],
+"c": 0,
+"h": "Критерии качества алгоритма",
+"e": "Критерии: <b>правильность</b>, <b>понятность</b>, <b>завершаемость</b>, <b>эффективность</b> (без лишней работы), <b>универсальность</b> (решает класс задач)."
+},
+{
+"t": 1,
+"q": "Что такое язык программирования?",
+"a": [
+"Набор правил и средств для записи алгоритмов и структур данных так, чтобы их мог обработать компьютер",
+"Программа для набора текста",
+"Операционная система компьютера",
+"Набор машинных команд процессора"
+],
+"c": 0,
+"h": "Язык программирования",
+"e": "Язык программирования — формальная система записи программ, «мост» между идеей человека и действиями компьютера."
+},
+{
+"t": 1,
+"q": "Что такое синтаксис языка программирования?",
+"a": [
+"Правила написания кода: порядок слов, скобки, точки с запятой, ключевые слова",
+"Смысл конструкций языка во время выполнения",
+"Набор готовых библиотек",
+"Скорость выполнения программы"
+],
+"c": 0,
+"h": "Синтаксис и семантика",
+"e": "<b>Синтаксис</b> — правила написания кода; ошибка в нём мешает компиляции. <b>Семантика</b> — смысл конструкций: что делает оператор или функция при выполнении."
+},
+{
+"t": 1,
+"q": "Что описывает семантика языка?",
+"a": [
+"Смысл конструкций — что именно делает оператор, выражение или функция",
+"Правила расстановки точек с запятой",
+"Внешний вид окна IDE",
+"Порядок установки компилятора"
+],
+"c": 0,
+"h": "Семантика",
+"e": "Семантика отвечает на вопрос «что произойдёт при выполнении?». Синтаксически верный код может иметь неверную семантику — это логическая ошибка."
+},
+{
+"t": 1,
+"q": "К какому уровню языков относится Ассемблер (команды MOV, ADD, JMP)?",
+"a": [
+"Низкоуровневый, близкий к машинному коду",
+"Высокоуровневый",
+"Предметно-ориентированный",
+"Язык разметки"
+],
+"c": 0,
+"h": "Уровни языков",
+"e": "Уровни: машинный код (010101) → ассемблер (MOV, ADD, JMP) → высокоуровневые (C++, Java, Python) → предметные (SQL, HTML/CSS). Чем ниже уровень — тем больше контроля, но выше сложность."
+},
+{
+"t": 1,
+"q": "К какой группе языков относятся SQL и HTML/CSS?",
+"a": [
+"Предметные (предметно-ориентированные)",
+"Машинные",
+"Ассемблерные",
+"Объектно-ориентированные"
+],
+"c": 0,
+"h": "Предметные языки",
+"e": "SQL и HTML/CSS — предметные языки, созданные для конкретной области: запросы к базам данных, разметка и оформление веб-страниц."
+},
+{
+"t": 1,
+"q": "Какая парадигма программирования строит программу из объектов с данными и методами?",
+"a": [
+"Объектно-ориентированная",
+"Процедурная",
+"Обобщённая",
+"Машинная"
+],
+"c": 0,
+"h": "Парадигмы программирования",
+"e": "<b>Процедурная</b> — последовательность действий и функций. <b>ООП</b> — объекты с данными и методами (класс Student). <b>Обобщённая</b> — код для разных типов (шаблон <code>max&lt;T&gt;()</code>)."
+},
+{
+"t": 1,
+"q": "Пример шаблона функции max<T>(), работающей с int, double, string, относится к парадигме…",
+"a": [
+"обобщённого программирования",
+"процедурного программирования",
+"машинного программирования",
+"структурного проектирования"
+],
+"c": 0,
+"h": "Обобщённое программирование",
+"e": "Обобщённое программирование — код пишется один раз для разных типов данных с помощью шаблонов (templates)."
+},
+{
+"t": 1,
+"q": "Для чего нужна директива #include <iostream>?",
+"a": [
+"Подключает заголовочный файл библиотеки ввода/вывода",
+"Объявляет переменную",
+"Завершает программу",
+"Запускает компилятор"
+],
+"c": 0,
+"h": "Анатомия программы C++",
+"e": "<code>#include</code> подключает заголовочный файл; <code>&lt;iostream&gt;</code> даёт <code>cout</code> и <code>cin</code>. <code>main()</code> — точка входа, <code>return 0</code> — успешное завершение.",
+"ex": "#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << \"Привет!\" << endl;\n    return 0;\n}"
+},
+{
+"t": 1,
+"q": "С какой функции начинается выполнение программы на C++?",
+"a": [
+"main()",
+"start()",
+"begin()",
+"run()"
+],
+"c": 0,
+"h": "Функция main",
+"e": "<code>main()</code> — точка входа программы. Выполнение всегда начинается с неё, независимо от положения в файле."
+},
+{
+"t": 1,
+"q": "Что сообщает операционной системе строка return 0; в функции main?",
+"a": [
+"Программа завершилась без ошибки",
+"Программа вернула число 0 на экран",
+"Нужно перезапустить программу",
+"Произошла ошибка"
+],
+"c": 0,
+"h": "return 0",
+"e": "<code>return 0;</code> в <code>main</code> возвращает ОС код завершения 0, что означает успешное выполнение. Ненулевой код обычно сигнализирует об ошибке."
+},
+{
+"t": 1,
+"q": "Какой из элементов программы является директивой препроцессора?",
+"code": "#include <iostream>\nint main() {\n    int a = 5;\n    return 0;\n}",
+"a": [
+"#include",
+"int",
+"main",
+"return"
+],
+"c": 0,
+"h": "Элементы исходного кода",
+"e": "В коде есть: ключевые слова (<code>int</code>, <code>return</code>), идентификаторы (<code>main</code>, <code>a</code>), операторы (<code>=</code>, <code>+</code>), литералы (<code>5</code>), разделители (<code>; { }</code>), директивы препроцессора (<code>#include</code>)."
+},
+{
+"t": 1,
+"q": "Что выведет программа?",
+"code": "int x = 10;\nint y = 3;\ncout << x / y;",
+"a": [
+"3",
+"3.33",
+"3.333333",
+"1"
+],
+"c": 0,
+"h": "Деление целых чисел",
+"e": "Оба операнда типа <code>int</code>, поэтому деление целочисленное: 10 / 3 = 3. Остаток <code>10 % 3</code> = 1."
+},
+{
+"t": 1,
+"q": "Чем отличается компилятор от интерпретатора?",
+"a": [
+"Компилятор переводит программу заранее и создаёт исполняемый файл, интерпретатор выполняет код по шагам",
+"Ничем",
+"Интерпретатор создаёт .exe, а компилятор нет",
+"Компилятор работает только с Python"
+],
+"c": 0,
+"h": "Компилятор и интерпретатор",
+"e": "Компилятор переводит всю программу заранее, ошибки видны до запуска, скорость обычно высокая. Интерпретатор выполняет код по шагам, удобен для экспериментов; ошибка может проявиться во время выполнения."
+},
+{
+"t": 1,
+"q": "Что делает компилятор?",
+"a": [
+"Переводит программу с языка высокого уровня в машинный код",
+"Рисует блок-схему",
+"Редактирует текст программы",
+"Хранит файлы проекта"
+],
+"c": 0,
+"h": "Компилятор",
+"e": "Компилятор (g++, MSVC, Clang) переводит <code>main.cpp</code> в исполняемый файл (<code>program.exe</code> / <code>a.out</code>), проверяя синтаксис и многие ошибки типов."
+},
+{
+"t": 1,
+"q": "Укажите правильный порядок этапов сборки программы C++.",
+"a": [
+"Препроцессор → компиляция → ассемблирование → компоновка",
+"Компиляция → препроцессор → компоновка → ассемблирование",
+"Компоновка → компиляция → препроцессор → запуск",
+"Ассемблирование → препроцессор → компиляция → компоновка"
+],
+"c": 0,
+"h": "Этапы компиляции C++",
+"e": "1) <b>Препроцессор</b> (#include, #define); 2) <b>компиляция</b> (C++ → asm); 3) <b>ассемблирование</b> (asm → .o); 4) <b>компоновка</b> (.o + библиотеки → exe)."
+},
+{
+"t": 1,
+"q": "Что делает препроцессор?",
+"a": [
+"Вставляет содержимое заголовочных файлов и обрабатывает макросы #define",
+"Проверяет логику программы",
+"Собирает объектные файлы в .exe",
+"Запускает отладчик"
+],
+"c": 0,
+"h": "Препроцессор",
+"e": "Препроцессор работает до основной компиляции: вставляет заголовочные файлы, обрабатывает макросы <code>#define</code>, может условно включать код. Смысл программы он не проверяет.",
+"ex": "#define PI 3.14159\ncout << PI;"
+},
+{
+"t": 1,
+"q": "Что означает ошибка компоновщика undefined reference?",
+"a": [
+"Объявление функции есть, а её реализация не найдена",
+"Пропущена точка с запятой",
+"Неверный тип переменной",
+"Деление на ноль"
+],
+"c": 0,
+"h": "Компоновщик (linker)",
+"e": "Компоновщик собирает объектные файлы (.o) и библиотеки в одну программу. <code>undefined reference</code> — реализация не найдена: проверьте подключение .cpp-файлов и библиотек."
+},
+{
+"t": 1,
+"q": "Какую ошибку содержит этот код?",
+"code": "int main() {\n    int x = 5;\n    cout << x\n    return 0;\n}",
+"a": [
+"Пропущена точка с запятой после cout << x",
+"Неверное имя функции main",
+"Ошибки нет",
+"Лишняя фигурная скобка"
+],
+"c": 0,
+"h": "Ошибки компиляции",
+"e": "После <code>cout &lt;&lt; x</code> нет <code>;</code>. Совет: смотрите на <b>первую</b> ошибку — она часто вызывает следующие; ищите ключевые слова expected, undeclared, cannot convert."
+},
+{
+"t": 1,
+"q": "Какой стандарт C++ НЕ существует?",
+"a": [
+"C++15",
+"C++11",
+"C++17",
+"C++20"
+],
+"c": 0,
+"h": "Стандарты C++",
+"e": "Стандарты: C++98, C++11, C++14, C++17, C++20, C++23. Стандарт описывает, какие конструкции языка и библиотеки должны работать; в учебных проектах полезно явно указывать, например, C++17."
+},
+{
+"t": 1,
+"q": "Как расшифровывается IDE?",
+"a": [
+"Integrated Development Environment — интегрированная среда разработки",
+"Internal Data Editor",
+"Interactive Debug Engine",
+"Input Device Emulator"
+],
+"c": 0,
+"h": "Что такое IDE",
+"e": "IDE объединяет в одном окне редактор кода, подсказки и анализ, компилятор и сборку, запуск программы и отладчик."
+},
+{
+"t": 1,
+"q": "Какая из перечисленных программ НЕ является средой разработки для C++?",
+"a": [
+"Microsoft Excel",
+"Visual Studio",
+"Code::Blocks",
+"CLion"
+],
+"c": 0,
+"h": "Среды разработки C++",
+"e": "Примеры IDE для C++: Visual Studio, CLion, VS Code (с расширениями), Qt Creator, Code::Blocks. IDE — инструмент; основа — язык и компилятор."
+},
+{
+"t": 1,
+"q": "Что такое breakpoint в отладчике?",
+"a": [
+"Точка останова программы в выбранной строке",
+"Ошибка компиляции",
+"Конец программы",
+"Команда удаления строки"
+],
+"c": 0,
+"h": "Отладка",
+"e": "<b>breakpoint</b> — остановка в строке; <b>step over</b> — выполнить текущую строку; <b>step into</b> — зайти внутрь функции; <b>watch</b> — наблюдать переменную; <b>call stack</b> — цепочка вызовов."
+},
+{
+"t": 1,
+"q": "Какая команда отладчика позволяет зайти внутрь вызываемой функции?",
+"a": [
+"step into",
+"step over",
+"watch",
+"breakpoint"
+],
+"c": 0,
+"h": "Пошаговое выполнение",
+"e": "<code>step into</code> заходит внутрь функции, <code>step over</code> выполняет строку целиком, не заходя в функцию. Правило отладки: сначала воспроизвести ошибку, затем искать причину."
+},
+{
+"t": 1,
+"q": "Что обычно содержат файлы .h и .cpp в проекте C++?",
+"a": [
+".h — объявления, .cpp — реализации",
+".h — реализации, .cpp — объявления",
+"Оба содержат только комментарии",
+".h — исполняемый код программы"
+],
+"c": 0,
+"h": "Структура проекта",
+"e": "Заголовочный файл <code>.h</code> содержит объявления (например, <code>int add(int a, int b);</code>), а <code>.cpp</code> — реализации. README описывает, что делает программа."
+},
+{
+"t": 1,
+"q": "Что выведет программа?",
+"code": "int x = 10;\nint& ref = x;\nref = 20;\ncout << x;",
+"a": [
+"20",
+"10",
+"30",
+"Ошибка"
+],
+"c": 0,
+"h": "Ссылки и указатели",
+"e": "Ссылка — другое имя уже существующей переменной, поэтому <code>ref = 20</code> меняет <code>x</code>. Указатель хранит адрес: <code>&amp;</code> берёт адрес, <code>*</code> разыменовывает."
+},
+{
+"t": 2,
+"q": "Что такое токен в исходном коде C++?",
+"a": [
+"Отдельная значимая единица исходного кода",
+"Один символ пробела",
+"Строка программы целиком",
+"Файл с программой"
+],
+"c": 0,
+"h": "Исходный код и токены",
+"e": "Токен — отдельная значимая единица кода: ключевое слово, имя, знак операции, литерал, разделитель. Лексический анализ выделяет токены, синтаксический — проверяет их сочетания."
+},
+{
+"t": 2,
+"q": "Сколько токенов в строке?",
+"code": "int age = 18;",
+"a": [
+"5",
+"4",
+"3",
+"11"
+],
+"c": 0,
+"h": "Разбор на токены",
+"e": "Токены: <code>int</code>, <code>age</code>, <code>=</code>, <code>18</code>, <code>;</code> — всего 5."
+},
+{
+"t": 2,
+"q": "Сколько токенов в строке?",
+"code": "int count = 10 + 5;",
+"a": [
+"7",
+"5",
+"6",
+"4"
+],
+"c": 0,
+"h": "Разбор строки на токены",
+"e": "<code>int</code> — ключевое слово, <code>count</code> — идентификатор, <code>=</code> — знак операции, <code>10</code> и <code>5</code> — литералы, <code>+</code> — оператор, <code>;</code> — разделитель. Итого 7."
+},
+{
+"t": 2,
+"q": "Чем является запись intnumber в строке intnumber = 10;?",
+"a": [
+"Одним идентификатором (именем), а не объявлением переменной типа int",
+"Объявлением переменной number типа int",
+"Ключевым словом",
+"Литералом"
+],
+"c": 0,
+"h": "Когда пробел меняет смысл",
+"e": "Без пробела <code>intnumber</code> — одно имя. Если оно не объявлено ранее, компилятор сообщит об ошибке. В <code>int number = 10;</code> — 5 токенов, в <code>intnumber = 10;</code> — 4."
+},
+{
+"t": 2,
+"q": "Какое назначение у фигурных скобок { }?",
+"a": [
+"Тело функции или блок кода",
+"Обращение к элементу массива",
+"Параметры функции",
+"Завершение инструкции"
+],
+"c": 0,
+"h": "Скобки и разделители",
+"e": "<code>( )</code> — параметры, условия, группировка; <code>{ }</code> — тело функции или блок; <code>[ ]</code> — элемент массива; <code>;</code> — конец инструкции; <code>,</code> — разделение элементов списка."
+},
+{
+"t": 2,
+"q": "Для чего используются квадратные скобки [ ]?",
+"a": [
+"Для обращения к элементу массива",
+"Для тела функции",
+"Для комментариев",
+"Для строковых литералов"
+],
+"c": 0,
+"h": "Квадратные скобки",
+"e": "Квадратные скобки используются для обращения к элементу массива по индексу, например <code>marks[0]</code> — первый элемент."
+},
+{
+"t": 2,
+"q": "Какие из записей допустимы и дают переменной значение 5?",
+"code": "int a=5;\nint b = 5;\nint c   =   5;",
+"a": [
+"Все три",
+"Только b",
+"Только a и b",
+"Ни одна"
+],
+"c": 0,
+"h": "Пробелы и переносы",
+"e": "Пробелы между токенами не меняют смысл, все три записи допустимы. Но внутри строки <code>\"Hello world\"</code> пробел — часть данных. Единый стиль облегчает чтение."
+},
+{
+"t": 2,
+"q": "Что такое литерал?",
+"a": [
+"Значение, непосредственно записанное в исходном коде",
+"Имя переменной",
+"Ключевое слово языка",
+"Комментарий в программе"
+],
+"c": 0,
+"h": "Литерал",
+"e": "Литерал — значение, записанное прямо в коде: <code>42</code>, <code>3.14</code>, <code>'A'</code>, <code>\"Ali\"</code>, <code>true</code>. В записи <code>int score = 42;</code> 42 — литерал, score — идентификатор."
+},
+{
+"t": 2,
+"q": "Является ли MAX_SCORE литералом в записи const int MAX_SCORE = 100;?",
+"a": [
+"Нет, это идентификатор (имя константы)",
+"Да, это целочисленный литерал",
+"Да, это строковый литерал",
+"Это ключевое слово"
+],
+"c": 0,
+"h": "Литерал, переменная и const",
+"e": "<code>MAX_SCORE</code> — идентификатор объекта с <code>const</code>; литерал здесь — <code>100</code>. Именованная константа и литерал — разные понятия."
+},
+{
+"t": 2,
+"q": "Какой тип имеет литерал 123456LL?",
+"a": [
+"long long",
+"long double",
+"int",
+"double"
+],
+"c": 0,
+"h": "Целочисленные литералы",
+"e": "Суффикс <code>LL</code> задаёт литерал типа <code>long long</code>. Десятичное число без суффикса получает тип <code>int</code>, если помещается в его диапазон."
+},
+{
+"t": 2,
+"q": "Какая запись числа тысяча допустима в C++14 и новее?",
+"a": [
+"1'000",
+"1 000",
+"1,000",
+"1.000 (как целое)"
+],
+"c": 0,
+"h": "Разделители цифр",
+"e": "Апостроф — разделитель цифр (с C++14), не меняет значение: <code>1'000 == 1000</code>, <code>1'000'000</code>. Пробел <code>1 000</code> разбивает число на отдельные элементы — ошибка."
+},
+{
+"t": 2,
+"q": "Какая запись вещественного литерала правильная?",
+"a": [
+"3.14",
+"3,14",
+"3:14",
+"3'14"
+],
+"c": 0,
+"h": "Вещественные литералы",
+"e": "Дробная часть отделяется <b>точкой</b>. <code>3,14</code> — это не один дробный литерал. Вещественный литерал без суффикса имеет тип <code>double</code>."
+},
+{
+"t": 2,
+"q": "Что означает суффикс f в литерале 12.5f?",
+"a": [
+"Литерал имеет тип float",
+"Литерал имеет тип double",
+"Число записано в шестнадцатеричном виде",
+"Это строковый литерал"
+],
+"c": 0,
+"h": "Тип float",
+"e": "Суффикс <code>f</code> задаёт литерал типа <code>float</code>. Без суффикса <code>12.5</code> — литерал типа <code>double</code>."
+},
+{
+"t": 2,
+"q": "Чему равно число 2.5e-3?",
+"a": [
+"0.0025",
+"2500",
+"0.025",
+"-2.5"
+],
+"c": 0,
+"h": "Научная запись",
+"e": "Буква <code>e</code> означает умножение на степень 10: <code>2.5e-3</code> = 2,5 × 10⁻³ = 0,0025. <code>6.02e23</code> = 6,02 × 10²³. Можно писать и <code>E</code>."
+},
+{
+"t": 2,
+"q": "Как правильно записать символьный литерал?",
+"a": [
+"'A'",
+"\"A\"",
+"A",
+"`A`"
+],
+"c": 0,
+"h": "Символьные литералы",
+"e": "Отдельный символ записывается в <b>одинарных</b> кавычках: <code>char grade = 'A';</code>. Символ <code>'7'</code> отличается от целого числа 7, пробел <code>' '</code> — тоже символ."
+},
+{
+"t": 2,
+"q": "Как правильно записать строковый литерал?",
+"a": [
+"\"Hello\"",
+"'Hello'",
+"Hello",
+"<Hello>"
+],
+"c": 0,
+"h": "Строковые литералы",
+"e": "Текст записывается в <b>двойных</b> кавычках. Для объекта <code>std::string</code> нужен заголовок <code>&lt;string&gt;</code>. Запись <code>'Hello'</code> для строки не подходит.",
+"ex": "#include <string>\nstd::string name = \"Ali\";\nstd::string empty = \"\";"
+},
+{
+"t": 2,
+"q": "Чем отличаются записи 7, '7' и \"7\"?",
+"a": [
+"Целое число, символ и строка",
+"Это одно и то же",
+"Целое, вещественное и логическое",
+"Строка, символ и целое"
+],
+"c": 0,
+"h": "Символ и строка",
+"e": "<code>7</code> — целочисленный литерал, <code>'7'</code> — символьный литерал, <code>\"7\"</code> — строковый литерал из одного символа."
+},
+{
+"t": 2,
+"q": "Какая управляющая последовательность обозначает новую строку?",
+"a": [
+"\\n",
+"\\t",
+"\\\\",
+"/n"
+],
+"c": 0,
+"h": "Специальные последовательности",
+"e": "<code>\\n</code> — новая строка, <code>\\t</code> — табуляция, <code>\\\"</code> — двойная кавычка, <code>\\\\</code> — обратный слэш. Обратите внимание на направление слэша."
+},
+{
+"t": 2,
+"q": "Как правильно записать путь C:\\Temp в строковом литерале?",
+"a": [
+"\"C:\\\\Temp\"",
+"\"C:\\Temp\"",
+"\"C:/\\Temp\"",
+"'C:\\Temp'"
+],
+"c": 0,
+"h": "Экранирование обратного слэша",
+"e": "Каждый обратный слэш в строковом литерале нужно экранировать: <code>\"C:\\\\Temp\"</code>. Иначе <code>\\T</code> будет воспринято как управляющая последовательность."
+},
+{
+"t": 2,
+"q": "Что выведет программа?",
+"code": "std::cout << \"Quote: \\\"C++\\\"\";",
+"a": [
+"Quote: \"C++\"",
+"Quote: \\\"C++\\\"",
+"Quote: C++",
+"Ошибка компиляции"
+],
+"c": 0,
+"h": "Спецсимволы в выводе",
+"e": "Последовательность <code>\\\"</code> выводит кавычку как часть текста. Кавычки, ограничивающие литерал, на экран не выводятся."
+},
+{
+"t": 2,
+"q": "Какие значения может принимать тип bool?",
+"a": [
+"true и false",
+"True и False",
+"\"true\" и \"false\"",
+"yes и no"
+],
+"c": 0,
+"h": "Логические литералы",
+"e": "<code>true</code> и <code>false</code> записываются без кавычек и <b>в нижнем регистре</b>. <code>True</code> C++ не распознаёт как логический литерал."
+},
+{
+"t": 2,
+"q": "Что обозначает литерал nullptr?",
+"a": [
+"Нулевое значение указателя — указатель ни на что не указывает",
+"Пустую строку",
+"Число 0 типа double",
+"Конец программы"
+],
+"c": 0,
+"h": "nullptr",
+"e": "<code>nullptr</code> — специальный литерал нулевого указателя (тип <code>std::nullptr_t</code>, с C++11). Нулевой указатель нельзя разыменовывать.",
+"ex": "int* pointer = nullptr;"
+},
+{
+"t": 2,
+"q": "Что произойдёт, если после объявления выполнить MAX_SCORE = 90;?",
+"code": "const int MAX_SCORE = 100;",
+"a": [
+"Ошибка компиляции — const нельзя изменить",
+"MAX_SCORE станет 90",
+"MAX_SCORE станет 190",
+"Программа выведет предупреждение и изменит значение"
+],
+"c": 0,
+"h": "Именованная константа const",
+"e": "<code>const</code> запрещает изменять объект после инициализации. Константы помогают выражать постоянные параметры программы, например <code>const double PI = 3.14159;</code>."
+},
+{
+"t": 2,
+"q": "В какой записи есть ошибка?",
+"a": [
+"char letter = \"A\";",
+"char letter = 'A';",
+"double pi = 3.14;",
+"int n = 1'000;"
+],
+"c": 0,
+"h": "Ошибки в записи значений",
+"e": "Типичные ошибки: <code>1 000</code> (пробел), <code>3,14</code> (запятая), <code>char letter = \"A\"</code> (строка вместо символа), <code>True</code> (неверный регистр). Проверяйте кавычки, разделители, регистр и суффиксы."
+},
+{
+"t": 2,
+"q": "Какая запись правильная?",
+"a": [
+"bool ready = true;",
+"bool ready = True;",
+"bool ready = \"true\";",
+"bool ready = TRUE;"
+],
+"c": 0,
+"h": "Регистр литералов",
+"e": "C++ чувствителен к регистру: логический литерал распознаётся только как <code>true</code> / <code>false</code> в нижнем регистре."
+},
+{
+"t": 3,
+"q": "Что такое идентификатор?",
+"a": [
+"Имя элемента программы (переменной, функции, класса)",
+"Значение, записанное в коде",
+"Ключевое слово языка",
+"Знак операции"
+],
+"c": 0,
+"h": "Идентификаторы",
+"e": "Идентификатор — имя элемента программы: переменной (<code>age</code>, <code>averageMark</code>), функции (<code>printResult</code>), класса, пространства имён."
+},
+{
+"t": 3,
+"q": "Какое имя переменной допустимо?",
+"a": [
+"score1",
+"1score",
+"student age",
+"class"
+],
+"c": 0,
+"h": "Правила записи имён",
+"e": "Имя состоит из латинских букв, цифр и <code>_</code>, не начинается с цифры, не содержит пробелов и дефисов, не совпадает с ключевым словом. <code>score1</code> — допустимо."
+},
+{
+"t": 3,
+"q": "Почему имя 1score недопустимо?",
+"a": [
+"Начинается с цифры",
+"Содержит букву s",
+"Слишком короткое",
+"Содержит цифру"
+],
+"c": 0,
+"h": "Первый символ имени",
+"e": "Имя не может начинаться с цифры. Исправление: <code>score1</code>. Цифры допустимы после первой буквы."
+},
+{
+"t": 3,
+"q": "Какое имя допустимо в C++?",
+"a": [
+"student_age",
+"student-age",
+"student age",
+"student.age"
+],
+"c": 0,
+"h": "Подчёркивание в имени",
+"e": "Подчёркивание внутри имени допустимо: <code>student_age</code>. Дефис, пробел и точка в имени запрещены."
+},
+{
+"t": 3,
+"q": "Можно ли использовать classNumber как имя переменной?",
+"a": [
+"Да, целиком это не ключевое слово",
+"Нет, содержит слово class",
+"Нет, имена не могут содержать заглавные буквы",
+"Только внутри класса"
+],
+"c": 0,
+"h": "Ключевое слово как часть имени",
+"e": "<code>class</code> — ключевое слово, но <code>classNumber</code> — другой идентификатор, его использовать можно."
+},
+{
+"t": 3,
+"q": "Что выведет программа?",
+"code": "int sum = 10;\nint Sum = 20;\nstd::cout << sum;",
+"a": [
+"10",
+"20",
+"30",
+"Ошибка: повторное объявление"
+],
+"c": 0,
+"h": "Регистр букв в имени",
+"e": "C++ различает строчные и прописные буквы: <code>sum</code> и <code>Sum</code> — разные переменные. Но различать смысл переменных только регистром первой буквы не рекомендуется."
+},
+{
+"t": 3,
+"q": "Какое имя переменной наиболее понятно для общей стоимости?",
+"a": [
+"totalPrice",
+"x",
+"a1",
+"tp"
+],
+"c": 0,
+"h": "Понятные имена",
+"e": "Осмысленное имя показывает назначение данных: <code>studentAge</code> вместо <code>a</code>, <code>totalPrice</code> вместо <code>x</code>, <code>printMenu()</code> вместо <code>f()</code>."
+},
+{
+"t": 3,
+"q": "Какой стиль именования используется для studentAge?",
+"a": [
+"camelCase",
+"snake_case",
+"PascalCase",
+"UPPER_CASE"
+],
+"c": 0,
+"h": "Стили именования",
+"e": "<b>camelCase</b> (<code>studentAge</code>) — переменные и функции; <b>snake_case</b> (<code>student_age</code>); <b>PascalCase</b> (<code>StudentAccount</code>) — классы; <b>UPPER_CASE</b> (<code>MAX_SCORE</code>) — константы."
+},
+{
+"t": 3,
+"q": "Какой стиль по учебной договорённости используется для именованных констант?",
+"a": [
+"UPPER_CASE, например MAX_SCORE",
+"camelCase, например maxScore",
+"PascalCase, например MaxScore",
+"snake_case, например max_score"
+],
+"c": 0,
+"h": "Имена констант",
+"e": "По договорённости лекций константы пишутся в UPPER_CASE: <code>MAX_SCORE</code>, <code>CURRENT_YEAR</code>. Компилятор стиль не проверяет — это соглашение команды."
+},
+{
+"t": 3,
+"q": "Какие имена зарезервированы реализацией C++, и их не следует использовать?",
+"a": [
+"Имена с двойным подчёркиванием, например __value",
+"Имена с цифрой в конце, например count2",
+"Имена в camelCase",
+"Имена из одной буквы"
+],
+"c": 0,
+"h": "Зарезервированные имена",
+"e": "Имена с <code>__</code> в любом месте и имена вида <code>_Value</code> (подчёркивание + заглавная) зарезервированы. Правило: начинайте собственные имена с буквы."
+},
+{
+"t": 3,
+"q": "Что такое ключевое слово?",
+"a": [
+"Слово, имеющее специальное значение в языке, которое нельзя использовать как обычное имя",
+"Любое имя переменной",
+"Название библиотеки",
+"Комментарий"
+],
+"c": 0,
+"h": "Ключевые слова",
+"e": "Ключевые слова (<code>int</code>, <code>return</code>, <code>const</code>…) — часть языка. Запись <code>int return = 5;</code> — ошибка."
+},
+{
+"t": 3,
+"q": "Какое из слов является ключевым словом C++?",
+"a": [
+"while",
+"cout",
+"main",
+"std"
+],
+"c": 0,
+"h": "Группы ключевых слов",
+"e": "Типы: <code>int, double, char, bool, void</code>; условия: <code>if, else, switch, case</code>; циклы: <code>for, while, do, break, continue</code>; функции и классы: <code>return, class, public, private</code>; другие: <code>const, new, delete, namespace, using</code>."
+},
+{
+"t": 3,
+"q": "Чем является cout?",
+"a": [
+"Именем стандартного объекта потока вывода из библиотеки",
+"Ключевым словом языка",
+"Директивой препроцессора",
+"Литералом"
+],
+"c": 0,
+"h": "Слова языка и имена библиотеки",
+"e": "<code>main</code>, <code>std</code>, <code>cout</code>, <code>string</code> — НЕ ключевые слова. <code>cout</code> — объект библиотеки, <code>std</code> — пространство имён, <code>main</code> — специальное имя функции."
+},
+{
+"t": 3,
+"q": "Чем является std в записи std::cout?",
+"a": [
+"Именем пространства имён стандартной библиотеки",
+"Ключевым словом",
+"Типом данных",
+"Директивой препроцессора"
+],
+"c": 0,
+"h": "Пространство имён std",
+"e": "<code>std::</code> указывает пространство имён стандартной библиотеки, где находятся <code>cout</code>, <code>cin</code>, <code>string</code> и др."
+},
+{
+"t": 3,
+"q": "Как записывается однострочный комментарий?",
+"a": [
+"// текст",
+"/* текст",
+"# текст",
+"<!-- текст -->"
+],
+"c": 0,
+"h": "Два вида комментариев",
+"e": "<code>//</code> — комментарий до конца строки. <code>/* ... */</code> — комментарий до закрывающей последовательности, может занимать несколько строк. Комментарии не выполняются.",
+"ex": "// Площадь прямоугольника\nint area = width * height;\n/* Пояснение можно\n   записать в несколько строк. */"
+},
+{
+"t": 3,
+"q": "Можно ли вкладывать блочные комментарии /* ... */ друг в друга?",
+"a": [
+"Нет, блок закрывается первой последовательностью */",
+"Да, на любую глубину",
+"Да, но только два уровня",
+"Только в C++20"
+],
+"c": 0,
+"h": "Ограничения комментариев",
+"e": "Блочный комментарий закрывается первой встреченной <code>*/</code>, поэтому вложение не работает. Незакрытый блок может сделать программу некорректной."
+},
+{
+"t": 3,
+"q": "Что выведет программа?",
+"code": "std::cout << \"// это текст\";",
+"a": [
+"// это текст",
+"Ничего — это комментарий",
+"это текст",
+"Ошибка компиляции"
+],
+"c": 0,
+"h": "// внутри строки",
+"e": "Символы <code>//</code> внутри кавычек — часть строкового литерала, а не комментарий. Поэтому на экран выведется весь текст."
+},
+{
+"t": 3,
+"q": "Какой комментарий наиболее полезен?",
+"a": [
+"// Радиус задан в сантиметрах.",
+"// увеличиваем x на 1 (рядом с x = x + 1)",
+"// код",
+"// переменная"
+],
+"c": 0,
+"h": "Полезные комментарии",
+"e": "Полезный комментарий раскрывает цель, допущение или причину решения (например, единицы измерения). Комментарий «увеличиваем x на 1» к <code>x = x + 1</code> редко полезен. При изменении кода обновляйте пояснения."
+},
+{
+"t": 3,
+"q": "Что выведет программа?",
+"code": "#include <iostream>\nint main() {\n    int a = 5;\n    int b = 7;\n    int sum = a + b;\n    std::cout << \"Sum = \" << sum << '\\n';\n    return 0;\n}",
+"a": [
+"Sum = 12",
+"Sum = sum",
+"Sum = 57",
+"12"
+],
+"c": 0,
+"h": "Пример полной программы",
+"e": "Подключается заголовок, в <code>main</code> создаются переменные, вычисляется сумма, выводится текст и значение, программа возвращает 0."
+},
+{
+"t": 3,
+"q": "Что выведет строка, если int sum = 12;?",
+"code": "std::cout << \"sum\";",
+"a": [
+"sum",
+"12",
+"\"sum\"",
+"Ошибка"
+],
+"c": 0,
+"h": "Вывод текста и значений",
+"e": "В кавычках — текст: на экран попадут буквы s, u, m. Без кавычек <code>sum</code> — обращение к переменной (выведется 12)."
+},
+{
+"t": 3,
+"q": "Нужна ли точка с запятой после #include <iostream>?",
+"a": [
+"Нет, после директивы #include точку с запятой не ставят",
+"Да, всегда",
+"Только в C++17",
+"Только если подключено несколько файлов"
+],
+"c": 0,
+"h": "Заголовок и std",
+"e": "<code>#include</code> — директива препроцессора, после неё <code>;</code> не ставят. Для <code>std::string</code> отдельно подключают <code>&lt;string&gt;</code>."
+},
+{
+"t": 3,
+"q": "Чему будет равно sum после выполнения кода?",
+"code": "int a = 5;\nint b = 7;\nint sum = a + b;\nsum = sum + 1;",
+"a": [
+"13",
+"12",
+"1",
+"6"
+],
+"c": 0,
+"h": "Объявление и присваивание",
+"e": "<code>int sum = a + b;</code> — объявление с инициализацией (12). <code>sum = sum + 1;</code> — присваивание: сначала вычисляется правая часть, затем результат сохраняется (13)."
+},
+{
+"t": 3,
+"q": "Чем отличается '\\n' от std::endl?",
+"a": [
+"endl добавляет новую строку и сбрасывает буфер, '\\n' только переводит строку",
+"Ничем",
+"'\\n' сбрасывает буфер, endl — нет",
+"endl выводит символ табуляции"
+],
+"c": 0,
+"h": "Перевод строки",
+"e": "<code>std::endl</code> добавляет новую строку и сбрасывает буфер вывода. Для обычного переноса строки достаточно <code>'\\n'</code>."
+},
+{
+"t": 3,
+"q": "Почему строка int class = 10; вызовет ошибку?",
+"a": [
+"class — ключевое слово, его нельзя использовать как имя",
+"Имя слишком короткое",
+"Нельзя присваивать 10",
+"Нет комментария"
+],
+"c": 0,
+"h": "Типичные ошибки программы",
+"e": "Ошибки: <code>int 2name</code> (начинается с цифры), <code>int class</code> (ключевое слово), пропущенная <code>;</code>, <code>Sum = 12;</code> при объявленном только <code>sum</code>. Одна ошибка может вызвать несколько сообщений."
+},
+{
+"t": 3,
+"q": "Чем являются элементы в строке const int MAX_SCORE = 100; // maximum?",
+"a": [
+"const, int — ключевые слова; MAX_SCORE — идентификатор; 100 — литерал; // maximum — комментарий",
+"Всё это ключевые слова",
+"MAX_SCORE — литерал, 100 — идентификатор",
+"const — комментарий"
+],
+"c": 0,
+"h": "Все элементы в одной строке",
+"e": "<code>const</code>, <code>int</code> — ключевые слова; <code>MAX_SCORE</code> — идентификатор константы; <code>100</code> — целочисленный литерал; <code>=</code> и <code>;</code> — начальное значение и конец объявления; <code>// ...</code> — комментарий."
+},
+{
+"t": 4,
+"q": "Что определяет тип данных?",
+"a": [
+"Формат хранения, диапазон значений и набор допустимых операций",
+"Только имя переменной",
+"Только цвет текста в IDE",
+"Порядок строк в программе"
+],
+"c": 0,
+"h": "Тип данных: смысл и роль",
+"e": "Тип отвечает на вопрос: «какие значения может хранить объект и что с ними разрешено делать?». Тип влияет на размер в памяти и на результат выражений. Тип — договор между программистом и компилятором."
+},
+{
+"t": 4,
+"q": "Что означает, что C++ — статически типизированный язык?",
+"a": [
+"Тип выражения известен во время компиляции",
+"Тип переменной меняется во время работы",
+"Типов данных в C++ нет",
+"Программа не может изменять значения переменных"
+],
+"c": 0,
+"h": "Статическая типизация",
+"e": "В C++ тип каждого выражения известен на этапе компиляции. Компилятор проверяет совместимость типов и находит часть ошибок ещё до запуска."
+},
+{
+"t": 4,
+"q": "Что выведет программа?",
+"code": "double x = 5;\ndouble y = 2;\ncout << x / y;",
+"a": [
+"2.5",
+"2",
+"3",
+"2.0"
+],
+"c": 0,
+"h": "Вещественное деление",
+"e": "Операнды типа <code>double</code> — деление вещественное: 5 / 2 = 2.5. Для <code>int a = 5, b = 2;</code> результат <code>a / b</code> был бы 2."
+},
+{
+"t": 4,
+"q": "Какой из типов является целочисленным?",
+"a": [
+"long long",
+"double",
+"float",
+"bool"
+],
+"c": 0,
+"h": "Классификация базовых типов",
+"e": "Целочисленные: <code>short, int, long, long long</code> (signed/unsigned). Символьные: <code>char</code> и др. Логический: <code>bool</code>. Вещественные: <code>float, double, long double</code>. Специальные: <code>void</code>, <code>nullptr_t</code>."
+},
+{
+"t": 4,
+"q": "Является ли std::string фундаментальным (встроенным) типом C++?",
+"a": [
+"Нет, это класс стандартной библиотеки",
+"Да, как int",
+"Да, как char",
+"Это ключевое слово"
+],
+"c": 0,
+"h": "std::string",
+"e": "<code>std::string</code> — класс стандартной библиотеки, нужен <code>#include &lt;string&gt;</code>. Строки можно присваивать, выводить, сравнивать и объединять оператором <code>+</code>."
+},
+{
+"t": 4,
+"q": "Что означает модификатор unsigned?",
+"a": [
+"Тип хранит только неотрицательные значения",
+"Тип может хранить дробные числа",
+"Переменную нельзя изменить",
+"Число всегда отрицательное"
+],
+"c": 0,
+"h": "signed и unsigned",
+"e": "<code>signed</code> — число может быть отрицательным (по умолчанию). <code>unsigned</code> — только неотрицательные значения; требует осторожности при вычитании."
+},
+{
+"t": 4,
+"q": "Что такое переполнение целого числа?",
+"a": [
+"Результат выходит за диапазон значений типа",
+"Переменная не инициализирована",
+"Слишком длинное имя переменной",
+"Деление на ноль"
+],
+"c": 0,
+"h": "Диапазоны и переполнение",
+"e": "У каждого целого типа есть мин. и макс. значение. Для <code>signed</code> переполнение — неопределённое поведение. Часто возникает при умножении, факториалах, степенях."
+},
+{
+"t": 4,
+"q": "Как правильно вычислить сумму, если она не помещается в int?",
+"code": "int a = 2'000'000'000;\nint b = 2'000'000'000;",
+"a": [
+"long long good = 1LL * a + b;",
+"int bad = a + b;",
+"double good = a + b;",
+"short good = a + b;"
+],
+"c": 0,
+"h": "Защита от переполнения",
+"e": "<code>1LL * a</code> заставляет вычисление выполняться в типе <code>long long</code>. Правило: если результат может быть большим — заранее используйте <code>long long</code>."
+},
+{
+"t": 4,
+"q": "Какой вещественный тип рекомендуется как стандартный выбор для большинства расчётов?",
+"a": [
+"double",
+"float",
+"long double",
+"int"
+],
+"c": 0,
+"h": "Вещественные типы",
+"e": "<code>float</code> — меньше памяти, меньше точность; <code>double</code> — стандартный выбор; <code>long double</code> — возможна большая точность, зависит от платформы."
+},
+{
+"t": 4,
+"q": "Как правильно сравнить вещественные числа, полученные вычислениями?",
+"a": [
+"С допустимой погрешностью: abs(x - 0.3) < eps",
+"Через оператор ==",
+"Через оператор =",
+"Сравнивать вещественные числа нельзя"
+],
+"c": 0,
+"h": "Проблема точности double",
+"e": "Числа хранятся в двоичной форме, поэтому <code>0.1 + 0.2</code> может немного отличаться от 0.3. Сравнивайте с погрешностью epsilon, например <code>1e-9</code>.",
+"ex": "double x = 0.1 + 0.2;\ndouble eps = 1e-9;\nif (abs(x - 0.3) < eps)\n    cout << \"Практически равно\";"
+},
+{
+"t": 4,
+"q": "Как лучше хранить денежные суммы, чтобы избежать ошибок точности?",
+"a": [
+"В минимальных единицах (тийины, копейки) как целое число",
+"В типе float",
+"В типе char",
+"В типе bool"
+],
+"c": 0,
+"h": "Хранение денег",
+"e": "Для денег сумму лучше хранить целым числом в минимальных единицах (тийины, копейки, центы), а не в <code>double</code>."
+},
+{
+"t": 4,
+"q": "Что выведет cout << int('A');?",
+"a": [
+"Числовой код символа A (65)",
+"A",
+"'A'",
+"Ошибка"
+],
+"c": 0,
+"h": "Символьный тип char",
+"e": "Внутри компьютера символ хранится как числовой код (для латиницы — ASCII). <code>int('A')</code> даёт 65. <code>char</code> — один символ, <code>string</code> — последовательность символов."
+},
+{
+"t": 4,
+"q": "Какое имя лучше подходит для переменной типа bool?",
+"a": [
+"isAdult",
+"adultCount",
+"x",
+"ageValue"
+],
+"c": 0,
+"h": "Логический тип bool",
+"e": "Имя bool-переменной часто формулируют как вопрос: <code>isReady</code>, <code>hasAccess</code>, <code>isPositive</code>. Результат сравнения (<code>age &gt;= 18</code>) имеет тип bool."
+},
+{
+"t": 4,
+"q": "Что такое переменная?",
+"a": [
+"Именованная область памяти, хранящая значение определённого типа",
+"Только число в программе",
+"Ключевое слово языка",
+"Строка комментария"
+],
+"c": 0,
+"h": "Переменная",
+"e": "Переменная = имя + тип + место в памяти + текущее значение. У неё есть также адрес и область видимости. Значение можно менять, если переменная не <code>const</code>."
+},
+{
+"t": 4,
+"q": "Чему равно count после выполнения кода?",
+"code": "int count = 10;\ncount = count + 1;",
+"a": [
+"11",
+"10",
+"1",
+"20"
+],
+"c": 0,
+"h": "Изменение значения переменной",
+"e": "Сначала вычисляется <code>count + 1</code> = 11, затем результат записывается в <code>count</code>."
+},
+{
+"t": 4,
+"q": "Чем инициализация отличается от присваивания?",
+"a": [
+"Инициализация — при создании переменной, присваивание — изменение существующей",
+"Ничем",
+"Присваивание происходит только для const",
+"Инициализация возможна только для string"
+],
+"c": 0,
+"h": "Инициализация и присваивание",
+"e": "<code>int a = 5;</code> — инициализация («с чем переменная родилась»). <code>a = 7;</code> — присваивание («на что изменили»). <code>const</code> нужно инициализировать сразу."
+},
+{
+"t": 4,
+"q": "Что произойдёт при выполнении кода?",
+"code": "int x;\ncout << x;",
+"a": [
+"Выведется неопределённое значение — ошибка: x не инициализирован",
+"Выведется 0",
+"Выведется пустая строка",
+"Программа не скомпилируется никогда"
+],
+"c": 0,
+"h": "Зачем нужна инициализация",
+"e": "Неинициализированная локальная переменная фундаментального типа содержит неопределённое значение. Золотое правило: не оставляйте локальные переменные без начального значения: <code>int y = 0;</code>."
+},
+{
+"t": 4,
+"q": "Как называется форма инициализации int c{10};?",
+"a": [
+"Списочная (list) инициализация",
+"Копирующая инициализация",
+"Прямая инициализация",
+"Инициализация по умолчанию"
+],
+"c": 0,
+"h": "Способы инициализации",
+"e": "<code>int a = 10;</code> — копирующая; <code>int b(10);</code> — прямая; <code>int c{10};</code> — списочная; <code>int x;</code> — по умолчанию (неопределено); <code>int d{};</code> — значимая (0)."
+},
+{
+"t": 4,
+"q": "Какое значение получит переменная int d{};?",
+"a": [
+"0",
+"Неопределённое значение",
+"1",
+"Ошибка компиляции"
+],
+"c": 0,
+"h": "Значимая инициализация",
+"e": "Пустые фигурные скобки дают «нулевое» значение: 0 для чисел, <code>false</code> для bool, <code>nullptr</code> для указателей, пустое состояние для string."
+},
+{
+"t": 4,
+"q": "Что произойдёт при компиляции строки int b{3.14};?",
+"a": [
+"Ошибка компиляции — сужающее преобразование с потерей дробной части",
+"b станет 3",
+"b станет 3.14",
+"b станет 0"
+],
+"c": 0,
+"h": "Защита от потерь в {}",
+"e": "Списочная инициализация запрещает сужающие преобразования. <code>int a = 3.14;</code> скомпилируется (a станет 3), а <code>int b{3.14};</code> — ошибка. Строгость компилятора — помощь."
+},
+{
+"t": 4,
+"q": "Чему будет равно r?",
+"code": "double r = 5 / 2;",
+"a": [
+"2.0",
+"2.5",
+"3.0",
+"0.5"
+],
+"c": 0,
+"h": "Неявные преобразования",
+"e": "Сначала вычисляется <code>5 / 2</code> как <code>int / int</code> = 2, и только потом 2 преобразуется в 2.0. Тип результата зависит от типов операндов, а не от переменной слева."
+},
+{
+"t": 4,
+"q": "Чему будет равно y?",
+"code": "double x = 3.9;\nint y = x;",
+"a": [
+"3",
+"4",
+"3.9",
+"0"
+],
+"c": 0,
+"h": "double → int",
+"e": "При преобразовании <code>double</code> в <code>int</code> дробная часть отбрасывается (не округляется): 3.9 → 3. Преобразование <code>int</code> → <code>double</code> безопасно: 5 → 5.0."
+},
+{
+"t": 4,
+"q": "Как получить вещественный процент из двух int-переменных?",
+"code": "int correct = 17;\nint total = 20;",
+"a": [
+"static_cast<double>(correct) / total * 100",
+"correct / total * 100",
+"(int)correct / total * 100",
+"correct % total * 100"
+],
+"c": 0,
+"h": "Явное преобразование static_cast",
+"e": "<code>static_cast&lt;тип&gt;(значение)</code> явно меняет тип и делает намерение видимым. Результат — 85. Без преобразования <code>17 / 20</code> = 0."
+},
+{
+"t": 4,
+"q": "Будет ли доступна переменная y после закрывающей скобки if?",
+"code": "if (x > 0) {\n    int y = 5;\n}\ncout << y;",
+"a": [
+"Нет, y вне области видимости — ошибка",
+"Да, выведет 5",
+"Да, выведет 0",
+"Да, если x > 0"
+],
+"c": 0,
+"h": "Область видимости",
+"e": "Локальная переменная, объявленная в блоке <code>{ }</code>, видна только внутри него. «Закончился блок — имя исчезло». Чем меньше область видимости, тем легче понимать код."
+},
+{
+"t": 4,
+"q": "Почему в формуле Цельсий → Фаренгейт пишут 9.0 / 5, а не 9 / 5?",
+"a": [
+"9 / 5 как целочисленное деление даёт 1, и формула станет неверной",
+"9.0 пишется короче",
+"9 / 5 вызывает ошибку компиляции",
+"Разницы нет"
+],
+"c": 0,
+"h": "Тип литералов в формулах",
+"e": "<code>F = C * 9.0 / 5 + 32</code>. Если <code>9 / 5</code> вычисляется отдельно как int, получится 1. Один вещественный операнд делает выражение вещественным."
+},
+{
+"t": 5,
+"q": "Что такое константа?",
+"a": [
+"Значение, которое не должно изменяться во время выполнения программы",
+"Любая переменная типа int",
+"Результат деления",
+"Имя функции"
+],
+"c": 0,
+"h": "Константа",
+"e": "Константа — неизменяемое значение. Бывает <b>литерал</b> (10, 3.14, 'A') и <b>именованная константа</b> (<code>const int MAX = 100;</code>). Если значение по смыслу не меняется — сделайте его константой."
+},
+{
+"t": 5,
+"q": "Чему равно значение восьмеричного литерала 052?",
+"a": [
+"42",
+"52",
+"5.2",
+"Ошибка"
+],
+"c": 0,
+"h": "Системы счисления",
+"e": "Литерал с ведущим <code>0</code> — восьмеричный: 052₈ = 5·8 + 2 = 42. <code>0x</code> — шестнадцатеричный, <code>0b</code> — двоичный.",
+"ex": "int dec = 42;\nint oct = 052;      // 42\nint hex = 0x2A;     // 42\nint bin = 0b101010; // 42"
+},
+{
+"t": 5,
+"q": "Какой префикс обозначает шестнадцатеричное число?",
+"a": [
+"0x",
+"0b",
+"0",
+"#"
+],
+"c": 0,
+"h": "Шестнадцатеричная запись",
+"e": "<code>0x</code> или <code>0X</code> — шестнадцатеричная запись: <code>0x2A</code> = 42. Удобна для битов и масок."
+},
+{
+"t": 5,
+"q": "Чему равно значение литерала 0b101010?",
+"a": [
+"42",
+"101010",
+"10",
+"52"
+],
+"c": 0,
+"h": "Двоичная запись",
+"e": "Префикс <code>0b</code> — двоичная запись: 101010₂ = 32 + 8 + 2 = 42."
+},
+{
+"t": 5,
+"q": "Чему равно значение 1.5e3?",
+"a": [
+"1500.0",
+"15.0",
+"0.0015",
+"1.53"
+],
+"c": 0,
+"h": "Научная запись",
+"e": "<code>1.5e3</code> = 1,5 × 10³ = 1500.0. По умолчанию вещественный литерал имеет тип <code>double</code>, суффикс <code>f</code> делает его <code>float</code>."
+},
+{
+"t": 5,
+"q": "Что выведет программа?",
+"code": "bool isAdult = true;\ncout << isAdult;",
+"a": [
+"1",
+"true",
+"True",
+"0"
+],
+"c": 0,
+"h": "Логические константы",
+"e": "При выводе <code>true</code> отображается как 1, <code>false</code> — как 0. Для вывода слов используйте <code>cout &lt;&lt; boolalpha &lt;&lt; isAdult;</code> — будет <code>true</code>."
+},
+{
+"t": 5,
+"q": "Чем constexpr отличается от const?",
+"a": [
+"constexpr требует, чтобы значение было вычислимо во время компиляции",
+"constexpr позволяет менять значение",
+"const работает только с double",
+"Ничем"
+],
+"c": 0,
+"h": "constexpr",
+"e": "<code>const</code> — значение нельзя менять после задания. <code>constexpr</code> — значение должно быть вычислимым на этапе компиляции. «constexpr = const + вычисление заранее»."
+},
+{
+"t": 5,
+"q": "Что выведет программа?",
+"code": "constexpr int HOURS = 24;\nconstexpr int MINUTES = HOURS * 60;\ncout << MINUTES;",
+"a": [
+"1440",
+"24",
+"60",
+"2460"
+],
+"c": 0,
+"h": "Минуты в сутках",
+"e": "24 × 60 = 1440. Все значения известны до запуска программы, поэтому можно использовать <code>constexpr</code>."
+},
+{
+"t": 5,
+"q": "Что такое «магическое число»?",
+"a": [
+"Число в формуле без понятного имени и смысла",
+"Очень большое число",
+"Случайное число",
+"Число π"
+],
+"c": 0,
+"h": "Магические числа",
+"e": "Пример: <code>total = price + price * 0.12;</code> — что такое 0.12? Лучше: <code>const double TAX_RATE = 0.12;</code>. Имя объясняет смысл, менять значение нужно в одном месте."
+},
+{
+"t": 5,
+"q": "Как работает операция присваивания a = a + 5;?",
+"a": [
+"Сначала вычисляется правая часть, затем результат записывается в левую",
+"Проверяется равенство a и a + 5",
+"Ошибка: a не может быть равно a + 5",
+"Сначала записывается a, потом прибавляется 5"
+],
+"c": 0,
+"h": "Операция присваивания",
+"e": "В C++ знак <code>=</code> — не математическое равенство, а запись значения справа в объект слева. Левая часть должна быть изменяемым объектом."
+},
+{
+"t": 5,
+"q": "Какая запись присваивания допустима?",
+"code": "int x = 5;",
+"a": [
+"x = 10;",
+"x + 1 = 10;",
+"5 = x;",
+"10 = x + 1;"
+],
+"c": 0,
+"h": "Левая и правая часть (lvalue = rvalue)",
+"e": "Слева — «куда записать» (изменяемая переменная), справа — «что записать». <code>x + 1</code> — выражение, а не место хранения; <code>5</code> — литерал, изменить его нельзя."
+},
+{
+"t": 5,
+"q": "Что выведет программа?",
+"code": "int a, b, c;\na = b = c = 10;\ncout << a << \" \" << b << \" \" << c;",
+"a": [
+"10 10 10",
+"10 0 0",
+"0 0 10",
+"Ошибка компиляции"
+],
+"c": 0,
+"h": "Цепочка присваиваний",
+"e": "Присваивание возвращает значение и выполняется справа налево: сначала <code>c = 10</code>, затем <code>b</code>, затем <code>a</code>."
+},
+{
+"t": 5,
+"q": "Чему будет равно x?",
+"code": "int x = 10;\nx += 5;\nx -= 3;",
+"a": [
+"12",
+"15",
+"7",
+"18"
+],
+"c": 0,
+"h": "Составные операции присваивания",
+"e": "<code>x += 5</code> → 15; <code>x -= 3</code> → 12. Аналогично <code>*=</code>, <code>/=</code>, <code>%=</code> (только для целых)."
+},
+{
+"t": 5,
+"q": "Чему будет равно x?",
+"code": "int x = 24;\nx /= 4;\nx %= 4;",
+"a": [
+"2",
+"6",
+"0",
+"1"
+],
+"c": 0,
+"h": "Операции /= и %=",
+"e": "<code>x /= 4</code> → 24 / 4 = 6; <code>x %= 4</code> → 6 % 4 = 2."
+},
+{
+"t": 5,
+"q": "Какое значение получит a?",
+"code": "int a = 3.99;",
+"a": [
+"3",
+"4",
+"3.99",
+"0"
+],
+"c": 0,
+"h": "Присваивание и преобразование типов",
+"e": "При записи в <code>int</code> дробная часть отбрасывается: 3.99 → 3. <code>double b = 5;</code> → 5.0; <code>char c = 65;</code> → часто 'A'."
+},
+{
+"t": 5,
+"q": "Чему равны a и b после выполнения кода?",
+"code": "int a = 7, b = 12;\nint temp = a;\na = b;\nb = temp;",
+"a": [
+"a = 12, b = 7",
+"a = 7, b = 12",
+"a = 12, b = 12",
+"a = 7, b = 7"
+],
+"c": 0,
+"h": "Обмен значений",
+"e": "<code>temp</code> временно хранит старое значение <code>a</code>. После <code>a = b</code> и <code>b = temp</code> переменные обменялись значениями."
+},
+{
+"t": 5,
+"q": "Чему равно выражение 2 + 3 * 4?",
+"a": [
+"14",
+"20",
+"24",
+"9"
+],
+"c": 0,
+"h": "Приоритет операций",
+"e": "Умножение, деление и остаток выполняются раньше сложения и вычитания: 3 × 4 = 12, 2 + 12 = 14. А <code>(2 + 3) * 4</code> = 20. Не экономьте на скобках."
+},
+{
+"t": 5,
+"q": "Что выведет программа?",
+"code": "int a = 17;\nint b = 5;\ncout << a / b << \" \" << a % b;",
+"a": [
+"3 2",
+"3.4 2",
+"2 3",
+"3 0"
+],
+"c": 0,
+"h": "Целочисленное деление и остаток",
+"e": "17 = 5 × 3 + 2. <code>/</code> даёт целую часть (3), <code>%</code> — остаток (2)."
+},
+{
+"t": 5,
+"q": "Что выведет cout << 5 / 2.0;?",
+"a": [
+"2.5",
+"2",
+"3",
+"2.0"
+],
+"c": 0,
+"h": "Вещественное деление",
+"e": "Чтобы получить дробный результат, хотя бы один операнд должен быть вещественным: <code>5 / 2</code> = 2, <code>5.0 / 2</code> = 2.5, <code>5 / 2.0</code> = 2.5."
+},
+{
+"t": 5,
+"q": "Чему будет равно x?",
+"code": "int x = 5;\n++x;\nx++;\n--x;",
+"a": [
+"6",
+"5",
+"7",
+"8"
+],
+"c": 0,
+"h": "Инкремент и декремент",
+"e": "<code>++</code> увеличивает на 1, <code>--</code> уменьшает на 1: 5 → 6 → 7 → 6. В отдельной строке префиксная (<code>++x</code>) и постфиксная (<code>x++</code>) формы дают одинаковый результат."
+},
+{
+"t": 5,
+"q": "Почему в формуле среднего балла пишут sum / 3.0, а не sum / 3?",
+"code": "int sum = a + b + c;\ndouble avg = sum / 3.0;",
+"a": [
+"sum / 3 — целочисленное деление, дробная часть потеряется",
+"sum / 3 вызывает ошибку",
+"3.0 быстрее вычисляется",
+"Разницы нет"
+],
+"c": 0,
+"h": "Средний балл",
+"e": "<code>sum</code> — int; если делить на <code>3</code>, деление целочисленное. Литерал <code>3.0</code> (double) делает деление вещественным."
+},
+{
+"t": 5,
+"q": "Чему будет равна итоговая цена при price = 200?",
+"code": "const double DISCOUNT = 0.15;\ndouble finalPrice = price * (1 - DISCOUNT);",
+"a": [
+"170",
+"185",
+"30",
+"199.85"
+],
+"c": 0,
+"h": "Скидка в магазине",
+"e": "<code>1 - DISCOUNT</code> = 0.85 — часть цены после скидки 15%. 200 × 0.85 = 170."
+},
+{
+"t": 5,
+"q": "Какая формула периметра прямоугольника записана правильно?",
+"a": [
+"2 * (width + height)",
+"2 * width + height",
+"width + height * 2",
+"2 * width * height"
+],
+"c": 0,
+"h": "Скобки в формулах",
+"e": "Скобки в периметре обязательны по смыслу: <code>2 * width + height</code> — уже другая формула."
+},
+{
+"t": 5,
+"q": "Сколько минут получится при total = 3725 секунд?",
+"code": "int minutes = (total % 3600) / 60;",
+"a": [
+"2",
+"62",
+"5",
+"1"
+],
+"c": 0,
+"h": "Перевод секунд",
+"e": "3725 % 3600 = 125 (остаток после целых часов), 125 / 60 = 2 минуты. Часы: 3725 / 3600 = 1, секунды: 3725 % 60 = 5. Итого 1 h 2 min 5 sec."
+},
+{
+"t": 5,
+"q": "Какая строка вызовет ошибку компиляции?",
+"a": [
+"int r = 5 % 2.0;",
+"int y = 3.9;",
+"cout << 5 / 2;",
+"double b = 5;"
+],
+"c": 0,
+"h": "Типичные ошибки новичков",
+"e": "Оператор <code>%</code> работает только с целыми числами. Также: <code>const int x;</code> без значения — ошибка; деление на ноль запрещено; не путайте <code>=</code> и <code>==</code>."
+},
+{
+"t": 6,
+"q": "Какой заголовочный файл нужен для printf() и scanf() в C++?",
+"a": [
+"<cstdio>",
+"<iostream>",
+"<string>",
+"<cmath>"
+],
+"c": 0,
+"h": "printf() и scanf() в C++",
+"e": "<code>printf()</code> и <code>scanf()</code> — функции из языка C, в C++ подключаются через <code>#include &lt;cstdio&gt;</code>. <code>cout</code>/<code>cin</code> — из <code>&lt;iostream&gt;</code>."
+},
+{
+"t": 6,
+"q": "Для чего предназначена функция printf()?",
+"a": [
+"Для вывода данных на экран по шаблону",
+"Для ввода данных с клавиатуры",
+"Для печати на принтере",
+"Для чтения файла"
+],
+"c": 0,
+"h": "Назначение printf",
+"e": "<code>printf()</code> выводит данные по строке формата, <code>scanf()</code> считывает данные из стандартного ввода."
+},
+{
+"t": 6,
+"q": "Какой спецификатор формата используется для вывода int?",
+"a": [
+"%d",
+"%f",
+"%c",
+"%s"
+],
+"c": 0,
+"h": "Основные спецификаторы",
+"e": "<code>%d</code> — int; <code>%u</code> — unsigned int; <code>%ld</code> — long; <code>%lld</code> — long long; <code>%f</code> — float/double в printf; <code>%lf</code> — double в scanf; <code>%c</code> — char; <code>%s</code> — строка char[]."
+},
+{
+"t": 6,
+"q": "Какой спецификатор нужен для ввода double через scanf?",
+"a": [
+"%lf",
+"%f",
+"%d",
+"%lld"
+],
+"c": 0,
+"h": "%lf для double",
+"e": "Для <code>double</code> в <code>scanf</code> нужен <code>%lf</code>. Самая частая ошибка: <code>scanf(\"%f\", &amp;doubleVar)</code>. При выводе через printf подходит <code>%f</code>."
+},
+{
+"t": 6,
+"q": "Какой спецификатор используется для вывода long long?",
+"a": [
+"%lld",
+"%ld",
+"%d",
+"%llf"
+],
+"c": 0,
+"h": "Вывод целых чисел",
+"e": "int → <code>%d</code>, long → <code>%ld</code>, long long → <code>%lld</code>, unsigned int → <code>%u</code>. Не смешивайте тип и формат.",
+"ex": "long long c = 9000000000LL;\nprintf(\"c = %lld\\n\", c);"
+},
+{
+"t": 6,
+"q": "Какой спецификатор выводит один символ char?",
+"a": [
+"%c",
+"%s",
+"%d",
+"%ch"
+],
+"c": 0,
+"h": "Символы и строки",
+"e": "<code>%c</code> печатает один символ, <code>%s</code> — строку C-style (<code>char[]</code>) до нулевого символа."
+},
+{
+"t": 6,
+"q": "Почему в scanf перед обычной переменной ставится знак &?",
+"a": [
+"scanf нужно знать адрес памяти, куда записать значение",
+"Это знак умножения",
+"Это обязательный символ конца строки",
+"Чтобы вывести значение на экран"
+],
+"c": 0,
+"h": "Зачем нужен &",
+"e": "<code>&amp;</code> — «адрес переменной». <code>scanf</code> изменяет переменную, поэтому ему нужен адрес: <code>scanf(\"%d\", &amp;x);</code> — правильно, <code>scanf(\"%d\", x);</code> — ошибка."
+},
+{
+"t": 6,
+"q": "Что выведет printf(\"%.2f\", 19.9876);?",
+"a": [
+"19.99",
+"19.98",
+"19.9876",
+"20.00"
+],
+"c": 0,
+"h": "Вывод дробных чисел",
+"e": "<code>%.2f</code> — 2 знака после точки с округлением. <code>%f</code> выводит 6 знаков, <code>%e</code> — научную запись, <code>%g</code> — короткий удобный вид."
+},
+{
+"t": 6,
+"q": "Сколько знаков после точки выводит спецификатор %f по умолчанию?",
+"a": [
+"6",
+"2",
+"0",
+"10"
+],
+"c": 0,
+"h": "Точность %f",
+"e": "По умолчанию <code>%f</code> выводит 6 знаков после точки: <code>19.987600</code>. Для отчётов чаще используют <code>%.2f</code>."
+},
+{
+"t": 6,
+"q": "Что означает спецификатор %8d?",
+"a": [
+"Число занимает минимум 8 позиций",
+"Вывести 8 знаков после точки",
+"Вывести число 8",
+"Вывести 8 чисел"
+],
+"c": 0,
+"h": "Ширина и точность",
+"e": "<code>%8d</code> — ширина минимум 8 позиций (выравнивание вправо); <code>%-8d</code> — выравнивание влево; <code>%.2f</code> — 2 знака после точки; <code>%8.2f</code> — ширина и точность."
+},
+{
+"t": 6,
+"q": "Что выведет printf(\"%05d\", 15);?",
+"a": [
+"00015",
+"15000",
+"   15",
+"+15"
+],
+"c": 0,
+"h": "Флаги форматирования",
+"e": "Флаг <code>0</code> заполняет нулями: <code>00015</code>. <code>-</code> — выравнивание влево; <code>+</code> — показать знак (<code>+15</code>); <code>#</code> — альтернативный вид (<code>%#x</code> для 255 → <code>0xff</code>)."
+},
+{
+"t": 6,
+"q": "Что выведет printf(\"%+d\", 15);?",
+"a": [
+"+15",
+"15",
+"015",
+"-15"
+],
+"c": 0,
+"h": "Флаг +",
+"e": "Флаг <code>+</code> всегда показывает знак числа: положительные выводятся с <code>+</code>."
+},
+{
+"t": 6,
+"q": "Как вывести на экран знак процента с помощью printf?",
+"a": [
+"%%",
+"\\%",
+"%p",
+"%"
+],
+"c": 0,
+"h": "Знак процента",
+"e": "Один <code>%</code> начинает спецификатор, поэтому сам знак записывается как <code>%%</code>.",
+"ex": "int progress = 85;\nprintf(\"Progress: %d%%\\n\", progress);\n// Progress: 85%"
+},
+{
+"t": 6,
+"q": "Какая управляющая последовательность обозначает табуляцию?",
+"a": [
+"\\t",
+"\\n",
+"\\\\",
+"\\s"
+],
+"c": 0,
+"h": "Escape-последовательности",
+"e": "<code>\\n</code> — новая строка, <code>\\t</code> — табуляция, <code>\\\"</code> — кавычка, <code>\\\\</code> — обратный слэш."
+},
+{
+"t": 6,
+"q": "Что возвращает функция scanf()?",
+"a": [
+"Количество успешно считанных значений",
+"Введённое число",
+"Всегда 0",
+"Адрес переменной"
+],
+"c": 0,
+"h": "Возвращаемое значение scanf",
+"e": "<code>scanf</code> возвращает количество успешно считанных значений. Если ввод не подходит формату — вернёт меньшее число. Это помогает проверять ошибки ввода.",
+"ex": "if (scanf(\"%d\", &x) == 1)\n    printf(\"x = %d\\n\", x);\nelse\n    printf(\"Input error!\\n\");"
+},
+{
+"t": 6,
+"q": "Как правильно считать два целых числа одной функцией scanf?",
+"a": [
+"scanf(\"%d %d\", &a, &b);",
+"scanf(\"%d\", &a, &b);",
+"scanf(\"%d %d\", a, b);",
+"scanf(&a, &b);"
+],
+"c": 0,
+"h": "Ввод нескольких значений",
+"e": "Форматы и адреса переменных указываются в одинаковом порядке. Пользователь может вводить значения через пробел или Enter."
+},
+{
+"t": 6,
+"q": "Почему перед %c после ввода числа часто ставят пробел: scanf(\" %c\", &letter)?",
+"a": [
+"Пробел пропускает оставшийся в буфере Enter и другие пробельные символы",
+"Чтобы вывести пробел",
+"Это обязательное правило синтаксиса",
+"Чтобы считать два символа"
+],
+"c": 0,
+"h": "Ловушка ввода символа",
+"e": "<code>%c</code> считывает любой символ, даже Enter, оставшийся после ввода числа. Пробел в формате пропускает пробельные символы."
+},
+{
+"t": 6,
+"q": "Сколько прочитает scanf(\"%19s\", name), если ввести «Ali Valiev»?",
+"a": [
+"Только слово Ali",
+"Ali Valiev",
+"Ничего",
+"Только Valiev"
+],
+"c": 0,
+"h": "Ввод строки через scanf",
+"e": "<code>%s</code> читает слово до пробела. <code>19</code> ограничивает длину (для <code>char name[20]</code>). Для полной строки в C++ лучше <code>getline</code>."
+},
+{
+"t": 6,
+"q": "Нужно ли ставить & перед массивом char[] в scanf(\"%19s\", name)?",
+"a": [
+"Нет, для массива char[] знак & не ставится",
+"Да, всегда",
+"Только для коротких строк",
+"Только при выводе"
+],
+"c": 0,
+"h": "Массив char[] в scanf",
+"e": "Имя массива уже является адресом его начала, поэтому для <code>char name[20]</code> пишут <code>scanf(\"%19s\", name);</code> без <code>&amp;</code>."
+},
+{
+"t": 6,
+"q": "Что выведет программа, если ввести 4.5 и 2?",
+"code": "double width, height;\nscanf(\"%lf %lf\", &width, &height);\nprintf(\"Area = %.2f\\n\", width * height);",
+"a": [
+"Area = 9.00",
+"Area = 9",
+"Area = 9.000000",
+"Area = 6.50"
+],
+"c": 0,
+"h": "Площадь прямоугольника",
+"e": "4.5 × 2 = 9; <code>%.2f</code> выводит два знака после точки: <code>9.00</code>."
+},
+{
+"t": 6,
+"q": "Какая строка printf содержит ошибку?",
+"code": "int x = 10;",
+"a": [
+"printf(\"%d %d\\n\", x);",
+"printf(\"%d\\n\", x);",
+"printf(\"x = %d\\n\", x);",
+"printf(\"%5d\\n\", x);"
+],
+"c": 0,
+"h": "Типичные ошибки printf",
+"e": "Количество форматов должно совпадать с количеством значений. Ошибки: форматов больше/меньше значений, <code>%f</code> для int, <code>%</code> вместо <code>%%</code>, забытый <code>\\n</code>."
+},
+{
+"t": 6,
+"q": "Что выведет printf(\"%d + %d = %d\\n\", a, b, sum); при a = 3, b = 4, sum = 7?",
+"a": [
+"3 + 4 = 7",
+"%d + %d = %d",
+"a + b = sum",
+"7"
+],
+"c": 0,
+"h": "Подстановка значений",
+"e": "Каждый спецификатор по порядку заменяется следующим значением из списка аргументов."
+},
+{
+"t": 6,
+"q": "Что означает формат %-10s?",
+"a": [
+"Строка шириной 10 позиций, выровненная по левому краю",
+"10 строк",
+"Строка без первых 10 символов",
+"Отрицательное число из 10 цифр"
+],
+"c": 0,
+"h": "Форматированный отчёт",
+"e": "<code>%-10s</code> — строка шириной 10, слева; <code>%5d</code> — число шириной 5; <code>%8.2f</code> — дробное шириной 8. Так удобно выравнивать таблицы."
+},
+{
+"t": 6,
+"q": "Какой вариант ввода для калькулятора соответствует формату?",
+"code": "scanf(\"%lf %c %lf\", &a, &op, &b);",
+"a": [
+"10 + 5",
+"10, 5, +",
+"+ 10 5",
+"10 5 +"
+],
+"c": 0,
+"h": "Простой калькулятор",
+"e": "Формат ожидает число, символ операции и число: <code>10 + 5</code>. Переменная <code>op</code> хранит знак операции, <code>if</code> выбирает нужное действие."
+},
+{
+"t": 6,
+"q": "Чем printf/scanf отличаются от cout/cin?",
+"a": [
+"printf/scanf дают точный контроль формата, cout/cin удобнее для C++-кода",
+"printf работает только в Python",
+"cin выводит, cout вводит",
+"Ничем"
+],
+"c": 0,
+"h": "printf/scanf и cout/cin",
+"e": "C-style: <code>&lt;cstdio&gt;</code>, <code>printf</code>, <code>scanf</code>. C++ style: <code>&lt;iostream&gt;</code>, <code>cout</code>, <code>cin</code>. В одном проекте лучше не смешивать стили без необходимости."
+},
+{
+"t": 7,
+"q": "Какой тип имеет результат операции отношения (например, a < b)?",
+"a": [
+"bool",
+"int",
+"double",
+"char"
+],
+"c": 0,
+"h": "Операции отношения",
+"e": "Операции отношения <code>&lt; &gt; &lt;= &gt;= == !=</code> сравнивают два значения и возвращают <code>bool</code>: <code>true</code> или <code>false</code>."
+},
+{
+"t": 7,
+"q": "Какой оператор означает «не равно»?",
+"a": [
+"!=",
+"<>",
+"=!",
+"=/="
+],
+"c": 0,
+"h": "Операторы сравнения",
+"e": "<code>==</code> — равно, <code>!=</code> — не равно, <code>&lt;=</code> — меньше или равно, <code>&gt;=</code> — больше или равно."
+},
+{
+"t": 7,
+"q": "Чему равен результат выражения 8 <= 8?",
+"a": [
+"true",
+"false",
+"8",
+"Ошибка"
+],
+"c": 0,
+"h": "Меньше или равно",
+"e": "<code>&lt;=</code> истинно, если левое значение меньше <b>или равно</b> правому. 8 равно 8, значит <code>true</code>."
+},
+{
+"t": 7,
+"q": "Что выведет программа?",
+"code": "int a = 10, b = 20;\nbool result = a < b;\ncout << boolalpha << result;",
+"a": [
+"true",
+"1",
+"false",
+"0"
+],
+"c": 0,
+"h": "boolalpha",
+"e": "Без <code>boolalpha</code> выведется <code>1</code>; с <code>boolalpha</code> — слово <code>true</code>."
+},
+{
+"t": 7,
+"q": "Что выведет программа?",
+"code": "int x = 12;\nint y = 7;\ncout << (x + y >= 20);",
+"a": [
+"0",
+"1",
+"19",
+"true"
+],
+"c": 0,
+"h": "Простые сравнения",
+"e": "Сначала вычисляются обе части: 12 + 7 = 19; 19 &gt;= 20 — ложь, выводится 0. Сравнение не изменяет значения переменных."
+},
+{
+"t": 7,
+"q": "В чём разница между = и ==?",
+"a": [
+"= присваивает значение, == сравнивает значения",
+"Это одно и то же",
+"== присваивает, = сравнивает",
+"= используется только для строк"
+],
+"c": 0,
+"h": "== и =",
+"e": "<code>==</code> отвечает на вопрос «равны ли значения?», <code>=</code> меняет значение переменной. Ошибка <code>if (x = 10)</code> присваивает 10, и условие всегда истинно."
+},
+{
+"t": 7,
+"q": "Что произойдёт в этом коде?",
+"code": "int x = 5;\nif (x = 10) {\n    cout << \"true\";\n}",
+"a": [
+"x станет 10, и выведется true",
+"Ничего не выведется, т.к. x не равен 10",
+"Ошибка компиляции",
+"Выведется false"
+],
+"c": 0,
+"h": "Ловушка присваивания в if",
+"e": "<code>x = 10</code> — присваивание; его результат 10 считается истиной. Для сравнения нужно <code>x == 10</code>."
+},
+{
+"t": 7,
+"q": "Как правильно проверить «примерно равно» для double?",
+"a": [
+"fabs(a - b) < eps",
+"a == b",
+"a = b",
+"a <= b && a >= b"
+],
+"c": 0,
+"h": "Сравнение дробных чисел",
+"e": "Дробные числа хранятся с погрешностью, поэтому <code>0.1 + 0.2 == 0.3</code> может быть ложно. Используйте <code>fabs(a - b) &lt; eps</code> из <code>&lt;cmath&gt;</code>, например <code>eps = 1e-9</code>."
+},
+{
+"t": 7,
+"q": "Как сравниваются символы char?",
+"a": [
+"По их числовым кодам",
+"По алфавиту без учёта регистра",
+"Сравнивать символы нельзя",
+"По длине"
+],
+"c": 0,
+"h": "Сравнение символов",
+"e": "Символы имеют числовые коды: <code>'A' &lt; 'B'</code>; <code>'a'</code> и <code>'A'</code> — разные символы. Так можно проверять диапазон букв: <code>ch &gt;= 'a' &amp;&amp; ch &lt;= 'z'</code>."
+},
+{
+"t": 7,
+"q": "Равны ли строки \"Admin\" и \"admin\" при сравнении через ==?",
+"a": [
+"Нет, регистр имеет значение",
+"Да",
+"Только в C++20",
+"Строки нельзя сравнивать через =="
+],
+"c": 0,
+"h": "Сравнение строк",
+"e": "Для <code>std::string</code> оператор <code>==</code> проверяет одинаковость текста с учётом регистра; <code>!=</code> — что строки разные."
+},
+{
+"t": 7,
+"q": "Когда выражение A && B истинно?",
+"a": [
+"Только когда оба условия true",
+"Когда хотя бы одно true",
+"Когда оба false",
+"Всегда"
+],
+"c": 0,
+"h": "Логическое И (&&)",
+"e": "Таблица истинности &&: 0 0 → 0; 0 1 → 0; 1 0 → 0; 1 1 → 1. Если хотя бы одна часть false — результат false."
+},
+{
+"t": 7,
+"q": "Когда выражение A || B ложно?",
+"a": [
+"Только когда оба условия false",
+"Когда одно из условий true",
+"Когда оба true",
+"Никогда"
+],
+"c": 0,
+"h": "Логическое ИЛИ (||)",
+"e": "Таблица истинности ||: 0 0 → 0; 0 1 → 1; 1 0 → 1; 1 1 → 1. Достаточно одного true."
+},
+{
+"t": 7,
+"q": "Что выведет программа?",
+"code": "bool isLoggedIn = false;\nif (!isLoggedIn)\n    cout << \"Please log in\";\nelse\n    cout << \"Welcome\";",
+"a": [
+"Please log in",
+"Welcome",
+"Ничего",
+"Ошибка"
+],
+"c": 0,
+"h": "Логическое НЕ (!)",
+"e": "<code>!</code> меняет значение на противоположное: <code>!false</code> = <code>true</code>, поэтому выполняется блок if."
+},
+{
+"t": 7,
+"q": "Какое условие проверяет ответ «да» в любом регистре?",
+"a": [
+"answer == 'y' || answer == 'Y'",
+"answer == 'y' && answer == 'Y'",
+"answer = 'y' || 'Y'",
+"answer == 'y' || 'Y'"
+],
+"c": 0,
+"h": "Выбор из вариантов через ||",
+"e": "Символ не может одновременно быть 'y' и 'Y', поэтому нужен <code>||</code>. Каждое сравнение пишется полностью."
+},
+{
+"t": 7,
+"q": "Что такое короткое вычисление (short-circuit evaluation)?",
+"a": [
+"Вторая часть && не проверяется, если первая false; вторая часть || — если первая true",
+"Программа завершается раньше времени",
+"Сокращённая запись x += 1",
+"Вычисление только целых чисел"
+],
+"c": 0,
+"h": "Короткое вычисление",
+"e": "Для <code>&amp;&amp;</code>: если первая часть false, дальше не проверяется. Для <code>||</code>: если первая часть true, дальше не проверяется. Это защищает, например, от деления на ноль."
+},
+{
+"t": 7,
+"q": "Что выведет программа?",
+"code": "int x = 0;\nif (x != 0 && 10 / x > 1)\n    cout << \"OK\";\nelse\n    cout << \"Safe\";",
+"a": [
+"Safe",
+"OK",
+"Ошибка деления на ноль",
+"Ничего"
+],
+"c": 0,
+"h": "Защита от деления на ноль",
+"e": "<code>x != 0</code> ложно, поэтому <code>10 / x</code> не вычисляется благодаря короткому вычислению, и выполняется else."
+},
+{
+"t": 7,
+"q": "Как правильно записать в C++ условие 1 ≤ x ≤ 10?",
+"a": [
+"x >= 1 && x <= 10",
+"1 <= x <= 10",
+"x >= 1 || x <= 10",
+"1 <= x && <= 10"
+],
+"c": 0,
+"h": "Проверка диапазона",
+"e": "В C++ нужны две проверки, объединённые <code>&amp;&amp;</code>. Запись <code>1 &lt;= x &lt;= 10</code> работает неверно: сначала вычисляется <code>1 &lt;= x</code> (0 или 1), а потом это сравнивается с 10 — почти всегда true."
+},
+{
+"t": 7,
+"q": "Какое условие проверяет, что x находится ВНЕ диапазона от 1 до 10?",
+"a": [
+"x < 1 || x > 10",
+"x < 1 && x > 10",
+"x >= 1 && x <= 10",
+"x > 1 || x < 10"
+],
+"c": 0,
+"h": "Проверка вне диапазона",
+"e": "Для «вне диапазона» достаточно одного нарушения границ, поэтому используется <code>||</code>: <code>x &lt; min || x &gt; max</code>."
+},
+{
+"t": 7,
+"q": "Что выведет программа?",
+"code": "int mark = 4;\nif (mark == 5) cout << \"Excellent\";\nelse if (mark == 4) cout << \"Good\";\nelse if (mark == 3) cout << \"Satisfactory\";\nelse cout << \"Try again\";",
+"a": [
+"Good",
+"Excellent",
+"GoodSatisfactory",
+"Try again"
+],
+"c": 0,
+"h": "else if: несколько вариантов",
+"e": "Проверки идут сверху вниз; как только одно условие true — выполняется его блок, остальные пропускаются. Порядок условий имеет значение."
+},
+{
+"t": 7,
+"q": "Как C++ понимает выражение !a || b && c?",
+"a": [
+"(!a) || (b && c)",
+"!(a || b) && c",
+"(!a || b) && c",
+"!(a || b && c)"
+],
+"c": 0,
+"h": "Приоритет операций",
+"e": "Порядок: <code>!</code> → <code>&lt; &gt; &lt;= &gt;=</code> → <code>== !=</code> → <code>&amp;&amp;</code> → <code>||</code>. Совет: в учебном коде чаще ставьте скобки."
+},
+{
+"t": 7,
+"q": "Какая операция выполняется раньше: && или ||?",
+"a": [
+"&&",
+"||",
+"Они равноправны, слева направо",
+"Зависит от компилятора"
+],
+"c": 0,
+"h": "&& раньше ||",
+"e": "<code>&amp;&amp;</code> имеет более высокий приоритет, чем <code>||</code>. При смешивании этих операций используйте скобки: <code>(age &gt;= 18 &amp;&amp; hasCard) || isTeacher</code>."
+},
+{
+"t": 7,
+"q": "Какое выражение эквивалентно !(A && B) по закону де Моргана?",
+"a": [
+"!A || !B",
+"!A && !B",
+"A || B",
+"!A && B"
+],
+"c": 0,
+"h": "Закон де Моргана",
+"e": "<code>!(A &amp;&amp; B)</code> ≡ <code>!A || !B</code>; <code>!(A || B)</code> ≡ <code>!A &amp;&amp; !B</code>. Пример: <code>!(x &gt;= 1 &amp;&amp; x &lt;= 10)</code> ≡ <code>x &lt; 1 || x &gt; 10</code>."
+},
+{
+"t": 7,
+"q": "Студент сдал, если score >= 60 и attendance >= 70. Пройдёт ли студент с score = 80, attendance = 50?",
+"code": "if (score >= 60 && attendance >= 70)\n    cout << \"Passed\";\nelse\n    cout << \"Not passed\";",
+"a": [
+"Нет — Not passed",
+"Да — Passed",
+"Ошибка",
+"Зависит от компилятора"
+],
+"c": 0,
+"h": "Проходной балл и посещаемость",
+"e": "Нужны оба условия, поэтому используется <code>&amp;&amp;</code>. attendance = 50 &lt; 70 — второе условие ложно, общий результат false."
+},
+{
+"t": 7,
+"q": "Какое условие подходит для скидки «студентам ИЛИ людям 60+»?",
+"a": [
+"isStudent || age >= 60",
+"isStudent && age >= 60",
+"!isStudent || age < 60",
+"isStudent && age < 60"
+],
+"c": 0,
+"h": "Скидка: ИЛИ",
+"e": "Достаточно выполнить одно из условий, поэтому используется <code>||</code>. При вводе bool: 1 — true, 0 — false."
+},
+{
+"t": 7,
+"q": "Какое условие проверяет, что число x чётное и положительное?",
+"a": [
+"x > 0 && x % 2 == 0",
+"x > 0 || x % 2 == 0",
+"x % 2 == 1 && x > 0",
+"x >= 0 && x / 2 == 0"
+],
+"c": 0,
+"h": "Чётное и положительное",
+"e": "Обе проверки должны быть истинны: <code>x &gt; 0</code> и <code>x % 2 == 0</code>, поэтому объединяем через <code>&amp;&amp;</code>. Проверяйте условие на граничных значениях: 0, 1, 2, -2."
+}
+];
+
+/* ================== STATE ================== */
+const SHAPES = [
+ '<svg viewBox="0 0 40 40"><polygon points="20,4 37,35 3,35" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40"><polygon points="20,2 38,20 20,38 2,20" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#fff"/></svg>',
+ '<svg viewBox="0 0 40 40"><rect x="4" y="4" width="32" height="32" fill="#fff"/></svg>'
+];
+const cfg = {topics:new Set(TOPICS.map((_,i)=>i)), count:20, time:20};
+let game = null, timerId = null;
+const $ = id => document.getElementById(id);
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtAns(s){ // моноширинный шрифт для ответов-кода (без кириллицы)
+  return (!/[а-яё]/i.test(s) && /[<>(){};\[\]=:+%&!~'\\#]/.test(s)) ? '<code>'+esc(s)+'</code>' : esc(s);
+}
+function store(k,v){try{ if(v===undefined) return JSON.parse(localStorage.getItem(k)); localStorage.setItem(k,JSON.stringify(v)); }catch(e){return null}}
+
+/* ================== SETUP UI ================== */
+function chipGroup(el, items, isOn, onClick){
+  el.innerHTML='';
+  items.forEach((it,i)=>{
+    const b=document.createElement('button');
+    b.className='chip'+(isOn(it,i)?' on':'');
+    b.textContent=it.label??it;
+    b.onclick=()=>{onClick(it,i);chipGroup(el,items,isOn,onClick)};
+    el.appendChild(b);
+  });
+}
+function renderSetup(){
+  const all={label:'Все темы'};
+  chipGroup($('topicChips'),[all,...TOPICS],
+    (it,i)=> i===0 ? cfg.topics.size===TOPICS.length : cfg.topics.has(i-1),
+    (it,i)=>{
+      if(i===0){ cfg.topics = cfg.topics.size===TOPICS.length ? new Set() : new Set(TOPICS.map((_,k)=>k)); }
+      else { cfg.topics.has(i-1)?cfg.topics.delete(i-1):cfg.topics.add(i-1); }
+    });
+  const counts=[{label:'10',v:10},{label:'20',v:20},{label:'50',v:50},{label:'Все ('+Q.length+')',v:999}];
+  chipGroup($('countChips'),counts,it=>cfg.count===it.v,it=>cfg.count=it.v);
+  const times=[{label:'10 сек',v:10},{label:'20 сек',v:20},{label:'30 сек',v:30},{label:'60 сек',v:60}];
+  chipGroup($('timeChips'),times,it=>cfg.time===it.v,it=>cfg.time=it.v);
+}
+$('nick').value = store('cppquiz_nick') || '';
+$('goBtn').onclick = ()=>{
+  if(!$('nick').value.trim()){ $('nick').focus(); $('nick').style.borderColor='var(--red)'; return; }
+  if(cfg.topics.size===0){ alertBox('Выберите хотя бы одну тему'); return; }
+  store('cppquiz_nick',$('nick').value.trim());
+  startGame();
+};
+function alertBox(msg){ const h=document.querySelector('#start .hint'); h.textContent=msg; h.style.color='var(--red)'; setTimeout(()=>{h.textContent='Отвечайте мышкой или клавишами 1–4. Чем быстрее правильный ответ — тем больше очков!';h.style.color=''},2500); }
+
+/* ================== GAME ================== */
+function buildSet(pool){
+  return shuffle(pool.slice()).map(q=>{
+    const order=shuffle([0,1,2,3]);
+    return {...q, A:order.map(i=>q.a[i]), C:order.indexOf(q.c)};
+  });
+}
+function startGame(pool){
+  const base = pool || Q.filter(q=>cfg.topics.has(q.t));
+  let set = buildSet(base);
+  if(!pool) set = set.slice(0, Math.min(cfg.count, set.length));
+  game = {name:($('nick').value.trim()||'Игрок'), qs:set, i:0, score:0, streak:0, best:0, log:[], retry:!!pool};
+  countdown(()=>ask());
+}
+function retryWrong(){
+  const wrong = game.log.filter(l=>!l.ok).map(l=>l.q);
+  if(!wrong.length) return;
+  startGame(wrong.map(w=>Q.find(q=>q.q===w.q && q.code===w.code)));
+}
+function countdown(done){
+  show('countdown'); let n=3; $('cdNum').textContent=n;
+  $('cdTitle').textContent = game.retry ? 'Работа над ошибками!' : 'Приготовьтесь, '+game.name+'!';
+  const t=setInterval(()=>{ n--; if(n<=0){clearInterval(t);done();} else { const el=$('cdNum'); el.textContent=n; el.style.animation='none'; el.offsetHeight; el.style.animation=''; } },900);
+}
+function ask(){
+  const q = game.qs[game.i];
+  $('qCounter').textContent = (game.i+1)+' / '+game.qs.length;
+  $('qPlayer').textContent = game.name;
+  $('qScore').textContent = game.score;
+  $('qStreak').textContent = game.streak+'🔥';
+  $('qTopic').textContent = TOPICS[q.t];
+  $('qText').textContent = q.q;
+  if(q.code){ $('qCode').hidden=false; $('qCode').textContent=q.code; } else $('qCode').hidden=true;
+  const box=$('answers'); box.innerHTML='';
+  q.A.forEach((txt,k)=>{
+    const b=document.createElement('button');
+    b.className='ans a'+k+(txt.length>60?' long':'');
+    b.innerHTML=SHAPES[k]+'<span>'+fmtAns(txt)+'</span><span class="k">'+(k+1)+'</span>';
+    b.onclick=()=>answer(k);
+    box.appendChild(b);
+  });
+  show('question');
+  game.t0 = performance.now(); game.locked=false;
+  const total=cfg.time*1000;
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    const left=Math.max(0,total-(performance.now()-game.t0));
+    $('timer').textContent=Math.ceil(left/1000);
+    $('timer').classList.toggle('warn', left<=5000);
+    $('timeBar').style.width=(left/total*100)+'%';
+    if(left<=0) answer(-1);
+  },100);
+}
+function answer(k){
+  if(game.locked) return; game.locked=true; clearInterval(timerId);
+  const q=game.qs[game.i];
+  const elapsed=Math.min(cfg.time*1000, performance.now()-game.t0);
+  const ok = k===q.C;
+  let pts=0, bonus=0;
+  if(ok){
+    pts = Math.round(1000*(1 - (elapsed/(cfg.time*1000))/2)); // 500..1000 как в Kahoot
+    game.streak++; game.best=Math.max(game.best,game.streak);
+    if(game.streak>=2) bonus=Math.min(500,(game.streak-1)*100);
+  } else game.streak=0;
+  game.score += pts+bonus;
+  game.log.push({q, picked:k, ok, pts:pts+bonus, time:elapsed/1000});
+  // подсветка
+  document.querySelectorAll('.ans').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.C) b.classList.add('right'); else b.classList.add('dim');
+    if(i===k){ b.classList.add('picked'); if(!ok){b.classList.add('wrong');b.classList.remove('dim')} }
+  });
+  setTimeout(()=>feedback(q,k,ok,pts,bonus), 900);
+}
+function feedback(q,k,ok,pts,bonus){
+  $('fbTitle').textContent = ok ? ['Верно!','Отлично!','Супер!','Так держать!'][Math.floor(Math.random()*4)] : (k===-1?'Время вышло!':'Неверно');
+  const ic=$('fbIcon'); ic.className='fb-icon '+(ok?'ok':'bad'); ic.textContent=ok?'✔':'✖';
+  $('fbPoints').textContent = ok ? '+ '+(pts+bonus) : '+ 0';
+  $('fbStreak').textContent = ok ? (game.streak>=2?'🔥 Серия ответов: '+game.streak+'  (бонус +'+bonus+')':'Серия ответов: 1') : 'Серия прервана — следующий вопрос ваш!';
+  $('fbRef').innerHTML =
+    '<h4>📘 Справка: '+esc(q.h)+'</h4>'+
+    '<p class="ca">Правильный ответ: '+fmtAns(q.A[q.C])+'</p>'+
+    '<p>'+q.e+'</p>'+(q.ex?'<div class="code">'+esc(q.ex)+'</div>':'');
+  $('nextBtn').textContent = game.i+1<game.qs.length ? 'Далее ▶' : 'Результаты 🏁';
+  show('feedback');
+  if(ok && game.streak>=3) confetti(40);
+}
+$('nextBtn').onclick=()=>{ game.i++; if(game.i<game.qs.length) ask(); else results(); };
+
+/* ================== RESULTS ================== */
+function results(){
+  const n=game.qs.length, right=game.log.filter(l=>l.ok).length, pct=Math.round(right/n*100);
+  const avg=(game.log.reduce((s,l)=>s+l.time,0)/n).toFixed(1);
+  $('resTitle').textContent = game.name+', ваш результат';
+  $('resScore').textContent = game.score.toLocaleString('ru-RU');
+  let grade = pct>=90?'Оценка «5» — превосходно! 🏆':pct>=75?'Оценка «4» — хорошо! 👍':pct>=50?'Оценка «3» — неплохо, повторите справочник 📘':'Оценка «2» — стоит повторить материал 💪';
+  $('resGrade').textContent = grade;
+  $('resStats').innerHTML = [
+    [right+' / '+n,'правильных'],[pct+'%','точность'],[game.best+'🔥','лучшая серия'],[avg+' с','среднее время']
+  ].map(s=>'<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>').join('');
+
+  // лидеры (локально)
+  let lb = store('cppquiz_lb') || [];
+  const entry={n:game.name,s:game.score,p:pct,d:Date.now()};
+  if(!game.retry){ lb.push(entry); lb.sort((a,b)=>b.s-a.s); lb=lb.slice(0,10); store('cppquiz_lb',lb); }
+  const list = lb.length?lb:[entry];
+  $('leader').innerHTML = list.map((e,i)=>'<li class="'+(e.d===entry.d?'me':'')+'"><span><span class="pos">'+(i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.')+'</span>'+esc(e.n)+'</span><span>'+e.s.toLocaleString('ru-RU')+' · '+e.p+'%</span></li>').join('');
+
+  // по темам
+  const by={}; game.log.forEach(l=>{const t=l.q.t; by[t]=by[t]||{r:0,n:0}; by[t].n++; if(l.ok)by[t].r++;});
+  $('byTopic').innerHTML = Object.keys(by).map(t=>{const p=Math.round(by[t].r/by[t].n*100);
+    return '<div class="tbar"><span class="tn">'+TOPICS[t]+'</span><span class="tt"><i style="width:'+p+'%;background:'+(p>=75?'var(--green)':p>=50?'var(--yellow)':'var(--red)')+'"></i></span><span>'+by[t].r+'/'+by[t].n+'</span></div>'}).join('');
+
+  // разбор
+  $('review').innerHTML = game.log.map((l,i)=>'<div class="rv '+(l.ok?'':'bad')+'"><b>'+(i+1)+'. '+esc(l.q.q)+'</b>'+
+    (l.ok?'<small>✔ '+esc(l.q.A[l.q.C])+' · +'+l.pts+'</small>':
+     '<small>✖ Ваш ответ: '+(l.picked===-1?'нет ответа':esc(l.q.A[l.picked]))+'<br>✔ Верно: '+esc(l.q.A[l.q.C])+'</small>')+'</div>').join('');
+  $('retryBtn').style.display = right<n ? '' : 'none';
+  show('results');
+  if(pct>=75) confetti(120);
+}
+
+/* ================== REFERENCE ================== */
+let refTopic=-1;
+function openRef(){ show('reference'); renderRefChips(); renderRef(); }
+function renderRefChips(){
+  chipGroup($('refChips'),['Все',...TOPICS],(it,i)=>refTopic===i-1,(it,i)=>{refTopic=i-1;renderRef()});
+}
+function renderRef(){
+  const s=$('refSearch').value.trim().toLowerCase();
+  const seen=new Set();
+  const items=Q.filter(q=>(refTopic<0||q.t===refTopic)).filter(q=>{
+    const hay=(q.h+' '+q.e+' '+q.q+' '+(q.ex||'')+' '+(q.code||'')).toLowerCase();
+    return !s||hay.includes(s);
+  }).filter(q=>{ const key=q.t+'|'+q.h; if(seen.has(key)) return false; seen.add(key); return true; });
+  $('refList').innerHTML = items.length ? items.map(q=>'<div class="rcard"><div class="t">'+TOPICS[q.t]+'</div><h5>'+esc(q.h)+'</h5><p>'+q.e+'</p>'+
+    (q.ex||q.code?'<div class="code">'+esc(q.ex||q.code)+'</div>':'')+'</div>').join('')
+    : '<div class="empty">Ничего не найдено</div>';
+}
+$('refSearch').addEventListener('input',renderRef);
+
+/* ================== MISC ================== */
+document.addEventListener('keydown',e=>{
+  if($('question').classList.contains('active') && ['1','2','3','4'].includes(e.key)) answer(+e.key-1);
+  else if($('feedback').classList.contains('active') && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); $('nextBtn').click(); }
+  else if($('start').classList.contains('active') && e.key==='Enter') $('goBtn').click();
+});
+function confetti(n){
+  const cols=['#e21b3c','#1368ce','#d89e00','#26890c','#ffd23f','#fff'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.style.left=Math.random()*100+'vw'; c.style.background=cols[i%cols.length];
+    c.style.animationDuration=(2+Math.random()*2)+'s'; c.style.animationDelay=(Math.random()*.6)+'s';
+    document.body.appendChild(c); setTimeout(()=>c.remove(),5000);
+  }
+}
+renderSetup();
+</script>
+</body>
+</html>
